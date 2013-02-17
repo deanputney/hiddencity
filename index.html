@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <script type="text/javascript" src="js/gamepad.js"></script>
+    <script type="text/javascript" src="js/tester.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <style type="text/css">
+    body{
+      width:100%;
+      height:100%;
+    }
+    </style>
+  </head>
+  <body>
+    <!-- <canvas width="1000" height="1000"></canvas> -->
+    <div id='no-gamepad-support'>
+    Your browser does not seem to support Gamepad API, or it might be
+    we’re not detecting it very well. Sorry!
+    </div>
+    <div id='no-gamepads-connected'>
+    No gamepads seem to be connected. Be sure to plug in a gamepad and then
+    press any of its buttons to activate it.
+    </div>
+    <div id="cursor1" style="position:absolute; width:50px; height:50px; background:limegreen;"></div>
+    <div id="cursor2" style="position:absolute; width:50px; height:50px; background:hotpink;"></div>
+    <script>
+      if(window!==top){
+        document.body.classList.add('iframe');
+      }
+      // document.querySelector('#mode-visual').addEventListener('click',tester.updateMode,false);
+      // document.querySelector('#mode-raw').addEventListener('click',tester.updateMode,false);
+      tester.init();
+      gamepadSupport.init();
+      
+      function updateScreen(){
+        locx = (navigator.webkitGetGamepads()[0].axes[0]+1)/2*document.height;
+        locy = (navigator.webkitGetGamepads()[0].axes[1]+1)/2*document.width;
+        $('#cursor1').css('top', locy+'px');
+        $('#cursor1').css('left', locx+'px');
+        // locx = (navigator.webkitGetGamepads()[1].axes[0]+1)/2*document.height;
+        // locy = (navigator.webkitGetGamepads()[1].axes[1]+1)/2*document.width;
+        // $('#cursor2').css('top', locy+'px');
+        // $('#cursor2').css('left', locx+'px');
+        setTimeout('updateScreen();', 20);
+      }
+      $(document).ready(function(){
+        updateScreen();
+      });
+    </script>
+  </body>
+</html>
