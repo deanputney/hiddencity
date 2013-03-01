@@ -1,6 +1,7 @@
 body {
   margin:0;
   padding:0;
+  background:#000;
 }
 
 #support-dialog {
@@ -8,22 +9,11 @@ body {
   display:none;
 }
 
-#field {
-  position:relative;
-  width:90%;
-  height:80%;
-  margin:5%;
-  border:2px solid #ccc;
+#debug {
+  position:fixed;
+  right:0;
+  top:0;
 }
-
-.player {
-  position:absolute;
-  padding:1.5%;
-}
-
-#p1 { background:hotpink; }
-#p2 { background:limegreen; }
-#p3 { background:; }
 
 .goal {
   

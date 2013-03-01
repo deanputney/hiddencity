@@ -3,6 +3,7 @@
     <script type="text/javascript" src="js/gamepad.js"></script>
     <script type="text/javascript" src="js/tester.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/three.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css" />
   </head>
   <body>
@@ -18,10 +19,172 @@
       </div>
     </div>
     
-    <div id="field">
-      <div id="p1" class="player"></div>
-      <div id="p2" class="player"></div>
+    <div id="debug">
+      
     </div>
+          
+    <script>
+
+        var camera, scene, renderer;
+        var geometry, material, mesh;
+        var COLORSETS = {
+          RAINBOWBRITE: new Array('#71c8bf', '#1ba554', '#cad93b', '#fef02f', '#fbb62c', '#f38a2e', '#ee592c', '#ea1d2b', '#b42767', '#65328f', '#52529f', '#20aeda'),
+          CMY: new Array('#FFE328', '#FF0E9B', '#20BECC'),
+          CMYK: new Array(''),
+          WHITE: new Array('#fff'),
+        };
+        var BARS = {
+          rotation: { speed:0, quantity:0 },
+          colorset: COLORSETS.RAINBOWBRITE.slice(0),
+          objects: [],
+          init: function(){
+            var bar, material;
+            for(var xpos = 0; xpos < 12; xpos++ ){
+              geometry = new THREE.CubeGeometry( window.innerWidth/12, window.innerHeight, window.innerWidth/12 );
+          		material = new THREE.MeshBasicMaterial( { color: BARS.colorset[0], wireframe: true, wireframeLinewidth: 3, overdraw: true } );
+            
+              bar = new THREE.Mesh( geometry, material );
+            
+              bar.position.x = window.innerWidth/12*xpos-window.innerWidth/2+window.innerWidth/12/2;
+              // bar.rotation.x = 1/12*xpos;
+              BARS.colorset.push(BARS.colorset.shift());
+              scene.add(bar);
+              BARS.push(bar);
+            }
+            BARS.rotateColors();
+          },
+          rotateColors: function(){
+            for(b in bars){
+              bars[b].material.color = new THREE.Color(COLORSETS.RAINBOWBRITE[0]);
+              COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
+            }
+            COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
+            setTimeout('rotateVerticalBarsColors();', 500);
+          },
+        };
+        
+
+        init();
+        animate();
+
+        function init() {
+
+            camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 1, 100000 );
+            camera.position.z = 10000;
+
+            scene = new THREE.Scene();
+
+            geometry = new THREE.CubeGeometry( 200, 200, 200 );
+            material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: false, wireframeLinewidth: 5, overdraw: true } );
+
+            mesh = new THREE.Mesh( geometry, material );
+            mesh.geometry.dynamic = true;
+            mesh.geometry.__dirtyVertices = true;
+            mesh.geometry.__dirtyNormals = true;
+            // scene.add( mesh );
+            
+            BARS.init();
+
+            renderer = new THREE.CanvasRenderer();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+
+            document.body.appendChild( renderer.domElement );
+
+        }
+
+        function animate() {
+            
+            $('#debug').empty().append(JSON.stringify(navigator.webkitGetGamepads()[0]));
+            
+            
+            // note: three.js includes requestAnimationFrame shim
+            requestAnimationFrame( animate );
+
+            // mesh.rotation.x += 0.01;
+            // mesh.rotation.y += 0.02;
+            // console.log(navigator.webkitGetGamepads()[0].buttons[0]);
+            for(b in bars){
+              bars[b].rotation.x += BARS.ROTATIONSPEED;
+            }
+            
+            if(navigator.webkitGetGamepads()[0]){
+              // mesh.scale.x = mesh.scale.y = mesh.scale.z = 1+navigator.webkitGetGamepads()[0].buttons[7]*.5;
+              // if(navigator.webkitGetGamepads()[0].buttons[5] == 1)
+              //   mesh.rotation.x = mesh.rotation.y = 0;
+              // if(navigator.webkitGetGamepads()[0].buttons[4] == 1)
+              //   mesh.position.x = mesh.position.y = 0;
+              // if(Math.abs(navigator.webkitGetGamepads()[0].axes[0]) >= .2)
+              //   mesh.position.x += navigator.webkitGetGamepads()[0].axes[0].toFixed(1)*10;
+              // if(Math.abs(navigator.webkitGetGamepads()[0].axes[1]) >= .2)
+              //   mesh.position.y += -navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*10;
+              // if(Math.abs(navigator.webkitGetGamepads()[0].axes[2]) >= .2)
+              //   mesh.rotation.y += navigator.webkitGetGamepads()[0].axes[2].toFixed(1)/50;
+              // if(Math.abs(navigator.webkitGetGamepads()[0].axes[3]) >= .2)
+              //   mesh.rotation.x += navigator.webkitGetGamepads()[0].axes[3].toFixed(1)/50;            
+              if(navigator.webkitGetGamepads()[0].buttons[5] == 1)
+                camera.rotation.x = camera.rotation.y = .01;
+              if(navigator.webkitGetGamepads()[0].buttons[4] == 1)
+                camera.position.x = camera.position.y = .5;
+              if(Math.abs(navigator.webkitGetGamepads()[0].axes[0]) >= .2)
+                camera.translateX(navigator.webkitGetGamepads()[0].axes[0].toFixed(1)*10)
+              if(Math.abs(navigator.webkitGetGamepads()[0].axes[1]) >= .2)
+                camera.translateZ(navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*100);
+              if(Math.abs(navigator.webkitGetGamepads()[0].axes[2]) >= .2)
+                camera.rotation.y += -navigator.webkitGetGamepads()[0].axes[2].toFixed(1)/100;
+              if(Math.abs(navigator.webkitGetGamepads()[0].axes[3]) >= .2)
+                camera.rotation.x += -navigator.webkitGetGamepads()[0].axes[3].toFixed(1)/100;
+                
+              if(navigator.webkitGetGamepads()[0].buttons[3] && !barsWireframe)
+                for(b in bars){ bars[b].material.wireframe = true; barsWireframe = true; }
+              else
+                for(b in bars){ bars[b].material.wireframe = false; barsWireframe = false; }
+                
+              if(navigator.webkitGetGamepads()[0].buttons[7] > 0)
+                for(b in bars){ bars[b].scale.y = 10*(1-navigator.webkitGetGamepads()[0].buttons[7]) }
+            }
+
+            renderer.render( scene, camera );
+
+        }
+        
+        
+        function makeParticles() { 
+ 
+        	var particle, material; 
+ 
+        	// we're gonna move from z position -1000 (far away) 
+        	// to 1000 (where the camera is) and add a random particle at every pos. 
+        	for ( var zpos= -1000; zpos < 1000; zpos+=50 ) {
+ 
+        		// we make a particle material and pass through the 
+        		// colour and custom particle render function we defined. 
+            geometry = new THREE.CubeGeometry( 20, 20, 20 );
+        		material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true, wireframeLinewidth: 1 } );
+        		// make the particle
+        		particle = new THREE.Mesh( geometry, material );
+ 
+        		// give it a random x and y position between -500 and 500
+        		particle.position.x = Math.random() * 1000 - 500;
+        		particle.position.y = Math.random() * 1000 - 500;
+            particle.rotation.x = Math.random();
+            particle.rotation.y = Math.random();
+ 
+        		// set its z position
+        		particle.position.z = zpos;
+ 
+        		// scale it up a bit
+            particle.scale.x = particle.scale.y = particle.scale.z = 2;
+ 
+        		// add it to the scene
+        		scene.add( particle );
+ 
+        		// and to the array of particles. 
+        		particles.push(particle); 
+        	}
+ 
+        }
+
+    </script>
     
     <script>
       if(window!==top){
@@ -31,21 +194,6 @@
       // document.querySelector('#mode-raw').addEventListener('click',tester.updateMode,false);
       tester.init();
       gamepadSupport.init();
-      
-      function updateScreen(){
-        locx = (navigator.webkitGetGamepads()[0].axes[0]+1)/2*document.height;
-        locy = (navigator.webkitGetGamepads()[0].axes[1]+1)/2*document.width;
-        $('#p1').css('top', locy+'px');
-        $('#p1').css('left', locx+'px');
-        // locx = (navigator.webkitGetGamepads()[1].axes[0]+1)/2*document.height;
-        // locy = (navigator.webkitGetGamepads()[1].axes[1]+1)/2*document.width;
-        // $('#cursor2').css('top', locy+'px');
-        // $('#cursor2').css('left', locx+'px');
-        setTimeout('updateScreen();', 20);
-      }
-      $(document).ready(function(){
-        updateScreen();
-      });
     </script>
   </body>
 </html>

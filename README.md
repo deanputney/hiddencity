@@ -1,5 +1,5 @@
 Games are going to be in the browser. 
 
-Chrome and Firefox already have support for gamepads, and I'm sick of trying to set up a Windows machine for Hokra. Like most of the games in the Sportsfriends pack, this is a great game but the setup is a real pain in the ass. By cloning it in the browser I hope to make it more accessible to people who want to play this game but don't want to spend time setting it up or who have the wrong platform to play on.
+Blah blah blah
 
 I recommend you grab an [XBOX 360 controller for the PC with the wireless adapter](http://www.amazon.com/Microsoft-Xbox-Wireless-Controller-Windows/dp/B004QRKWKQ/ref=sr_1_6?ie=UTF8&qid=1361080852&sr=8-6&keywords=xbox+360+pc+wireless+gaming+receiver&tag=deanp-20). This will work with other wireless controllers using the same receiver. You can also buy [the receiver separately](http://www.amazon.com/Xbox-360-Wireless-Gaming-Receiver-Windows/dp/B000HZFCT2/ref=pd_sim_vg_1?tag=deanp-20).
