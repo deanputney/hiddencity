@@ -47,15 +47,15 @@
             
               bar.position.x = window.innerWidth/12*xpos-window.innerWidth/2+window.innerWidth/12/2;
               // bar.rotation.x = 1/12*xpos;
-              BARS.colorset.push(BARS.colorset.shift());
+              this.colorset.push(this.colorset.shift());
               scene.add(bar);
-              BARS.push(bar);
+              this.push(bar);
             }
-            BARS.rotateColors();
+            this.rotateColors();
           },
           rotateColors: function(){
-            for(b in bars){
-              bars[b].material.color = new THREE.Color(COLORSETS.RAINBOWBRITE[0]);
+            for(b in this.objects){
+              this.objects[b].material.color = new THREE.Color(COLORSETS.RAINBOWBRITE[0]);
               COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
             }
             COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
@@ -103,8 +103,8 @@
             // mesh.rotation.x += 0.01;
             // mesh.rotation.y += 0.02;
             // console.log(navigator.webkitGetGamepads()[0].buttons[0]);
-            for(b in bars){
-              bars[b].rotation.x += BARS.ROTATIONSPEED;
+            for(b in BARS.objects){
+              BARS.objects[b].rotation.x += BARS.rotation.speed;
             }
             
             if(navigator.webkitGetGamepads()[0]){
@@ -135,54 +135,18 @@
                 camera.rotation.x += -navigator.webkitGetGamepads()[0].axes[3].toFixed(1)/100;
                 
               if(navigator.webkitGetGamepads()[0].buttons[3] && !barsWireframe)
-                for(b in bars){ bars[b].material.wireframe = true; barsWireframe = true; }
+                for(b in BARS.objects){ BARS.objects[b].material.wireframe = true; barsWireframe = true; }
               else
-                for(b in bars){ bars[b].material.wireframe = false; barsWireframe = false; }
+                for(b in BARS.objects){ BARS.objects[b].material.wireframe = false; barsWireframe = false; }
                 
               if(navigator.webkitGetGamepads()[0].buttons[7] > 0)
-                for(b in bars){ bars[b].scale.y = 10*(1-navigator.webkitGetGamepads()[0].buttons[7]) }
+                for(b in BARS.objects){ BARS.objects[b].scale.y = 10*(1-navigator.webkitGetGamepads()[0].buttons[7]) }
             }
 
             renderer.render( scene, camera );
 
         }
         
-        
-        function makeParticles() { 
- 
-        	var particle, material; 
- 
-        	// we're gonna move from z position -1000 (far away) 
-        	// to 1000 (where the camera is) and add a random particle at every pos. 
-        	for ( var zpos= -1000; zpos < 1000; zpos+=50 ) {
- 
-        		// we make a particle material and pass through the 
-        		// colour and custom particle render function we defined. 
-            geometry = new THREE.CubeGeometry( 20, 20, 20 );
-        		material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true, wireframeLinewidth: 1 } );
-        		// make the particle
-        		particle = new THREE.Mesh( geometry, material );
- 
-        		// give it a random x and y position between -500 and 500
-        		particle.position.x = Math.random() * 1000 - 500;
-        		particle.position.y = Math.random() * 1000 - 500;
-            particle.rotation.x = Math.random();
-            particle.rotation.y = Math.random();
- 
-        		// set its z position
-        		particle.position.z = zpos;
- 
-        		// scale it up a bit
-            particle.scale.x = particle.scale.y = particle.scale.z = 2;
- 
-        		// add it to the scene
-        		scene.add( particle );
- 
-        		// and to the array of particles. 
-        		particles.push(particle); 
-        	}
- 
-        }
 
     </script>
     
