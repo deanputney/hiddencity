@@ -49,13 +49,13 @@
               // bar.rotation.x = 1/12*xpos;
               BARS.colorset.push(BARS.colorset.shift());
               scene.add(bar);
-              BARS.push(bar);
+              BARS.objects.push(bar);
             }
             BARS.rotateColors();
           },
           rotateColors: function(){
-            for(b in bars){
-              bars[b].material.color = new THREE.Color(COLORSETS.RAINBOWBRITE[0]);
+            for(b in BARS.objects){
+              BARS.objects[b].material.color = new THREE.Color(COLORSETS.RAINBOWBRITE[0]);
               COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
             }
             COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
@@ -103,8 +103,8 @@
             // mesh.rotation.x += 0.01;
             // mesh.rotation.y += 0.02;
             // console.log(navigator.webkitGetGamepads()[0].buttons[0]);
-            for(b in bars){
-              bars[b].rotation.x += BARS.ROTATIONSPEED;
+            for(b in BARS.objects){
+              BARS.objects[b].rotation.x += BARS.rotation.speed;
             }
             
             if(navigator.webkitGetGamepads()[0]){
@@ -135,12 +135,12 @@
                 camera.rotation.x += -navigator.webkitGetGamepads()[0].axes[3].toFixed(1)/100;
                 
               if(navigator.webkitGetGamepads()[0].buttons[3] && !barsWireframe)
-                for(b in bars){ bars[b].material.wireframe = true; barsWireframe = true; }
+                for(b in BARS.objects){ BARS.objects[b].material.wireframe = true; barsWireframe = true; }
               else
-                for(b in bars){ bars[b].material.wireframe = false; barsWireframe = false; }
+                for(b in BARS.objects){ BARS.objects[b].material.wireframe = false; barsWireframe = false; }
                 
               if(navigator.webkitGetGamepads()[0].buttons[7] > 0)
-                for(b in bars){ bars[b].scale.y = 10*(1-navigator.webkitGetGamepads()[0].buttons[7]) }
+                for(b in BARS.objects){ BARS.objects[b].scale.y = 10*(1-navigator.webkitGetGamepads()[0].buttons[7]) }
             }
 
             renderer.render( scene, camera );
