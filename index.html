@@ -33,8 +33,17 @@
           CMYK: new Array(''),
           WHITE: new Array('#fff'),
         };
+        
+        var BACKGROUND = {
+          colorset: COLORSETS.RAINBOWBRITE.slice(0),
+        };
+        BACKGROUND.color = BACKGROUND.colorset[0];
+        
         var BARS = {
-          rotation: { speed:0, quantity:0 },
+          rotation: { 
+            speed: 0, 
+            quantity: 0 
+          },
           colorset: COLORSETS.RAINBOWBRITE.slice(0),
           objects: [],
           init: function(){
@@ -138,6 +147,13 @@
                 for(b in BARS.objects){ BARS.objects[b].material.wireframe = true; barsWireframe = true; }
               else
                 for(b in BARS.objects){ BARS.objects[b].material.wireframe = false; barsWireframe = false; }
+                
+              if(navigator.webkitGetGamepads()[0].buttons[0] && $('body').css('background') != '#000') {
+                // $('body').css('background') = 
+              }
+              else {
+                
+              }
                 
               if(navigator.webkitGetGamepads()[0].buttons[7] > 0)
                 for(b in BARS.objects){ BARS.objects[b].scale.y = 10*(1-navigator.webkitGetGamepads()[0].buttons[7]) }
