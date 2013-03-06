@@ -4,6 +4,7 @@
     <script type="text/javascript" src="js/tester.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/three.min.js"></script>
+    <script type="text/javascript" src="js/jquery.hotkeys.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css" />
   </head>
   <body>
@@ -35,9 +36,23 @@
         };
         
         var BACKGROUND = {
+          default: '#000000',
           colorset: COLORSETS.RAINBOWBRITE.slice(0),
+          togglePulse: function(){
+            if(this.color == this.default){
+              $('body').css('background', this.colorset[0]);
+              this.color = this.colorset[0];
+              this.colorset.push(this.colorset.shift());
+            }
+            else {
+              $('body').css('background', this.default);
+              this.color = this.default;
+            }
+            return this.color;
+          },
         };
-        BACKGROUND.color = BACKGROUND.colorset[0];
+        BACKGROUND.color = BACKGROUND.default;
+        
         
         var BARS = {
           rotation: { 
@@ -58,7 +73,7 @@
               // bar.rotation.x = 1/12*xpos;
               this.colorset.push(this.colorset.shift());
               scene.add(bar);
-              this.push(bar);
+              this.objects.push(bar);
             }
             this.rotateColors();
           },
@@ -116,20 +131,7 @@
               BARS.objects[b].rotation.x += BARS.rotation.speed;
             }
             
-            if(navigator.webkitGetGamepads()[0]){
-              // mesh.scale.x = mesh.scale.y = mesh.scale.z = 1+navigator.webkitGetGamepads()[0].buttons[7]*.5;
-              // if(navigator.webkitGetGamepads()[0].buttons[5] == 1)
-              //   mesh.rotation.x = mesh.rotation.y = 0;
-              // if(navigator.webkitGetGamepads()[0].buttons[4] == 1)
-              //   mesh.position.x = mesh.position.y = 0;
-              // if(Math.abs(navigator.webkitGetGamepads()[0].axes[0]) >= .2)
-              //   mesh.position.x += navigator.webkitGetGamepads()[0].axes[0].toFixed(1)*10;
-              // if(Math.abs(navigator.webkitGetGamepads()[0].axes[1]) >= .2)
-              //   mesh.position.y += -navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*10;
-              // if(Math.abs(navigator.webkitGetGamepads()[0].axes[2]) >= .2)
-              //   mesh.rotation.y += navigator.webkitGetGamepads()[0].axes[2].toFixed(1)/50;
-              // if(Math.abs(navigator.webkitGetGamepads()[0].axes[3]) >= .2)
-              //   mesh.rotation.x += navigator.webkitGetGamepads()[0].axes[3].toFixed(1)/50;            
+            if(navigator.webkitGetGamepads()[0]){          
               if(navigator.webkitGetGamepads()[0].buttons[5] == 1)
                 camera.rotation.x = camera.rotation.y = .01;
               if(navigator.webkitGetGamepads()[0].buttons[4] == 1)
@@ -148,12 +150,10 @@
               else
                 for(b in BARS.objects){ BARS.objects[b].material.wireframe = false; barsWireframe = false; }
                 
-              if(navigator.webkitGetGamepads()[0].buttons[0] && $('body').css('background') != '#000') {
-                // $('body').css('background') = 
-              }
-              else {
+              if(navigator.webkitGetGamepads()[0].buttons[0] > 0)
+                BACKGROUND.togglePulse();
                 
-              }
+              console.log(navigator.webkitGetGamepads()[0].buttons[0]);
                 
               if(navigator.webkitGetGamepads()[0].buttons[7] > 0)
                 for(b in BARS.objects){ BARS.objects[b].scale.y = 10*(1-navigator.webkitGetGamepads()[0].buttons[7]) }
