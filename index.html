@@ -5,6 +5,14 @@
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/three.min.js"></script>
     <script type="text/javascript" src="js/jquery.hotkeys.js"></script>
+    <script type="text/javascript" src="js/stats.min.js"></script>
+    
+    
+    <script type="text/javascript" src="visuals/defaults.js"></script>
+    <script type="text/javascript" src="visuals/menu.js"></script>
+    <script type="text/javascript" src="visuals/minusbaby.js"></script>
+    <script type="text/javascript" src="visuals/brightprimate.js"></script>
+    
     <link rel="stylesheet" type="text/css" href="css/style.css" />
   </head>
   <body>
@@ -23,148 +31,17 @@
     <div id="debug">
       
     </div>
-          
-    <script>
-
-        var camera, scene, renderer;
-        var geometry, material, mesh;
-        var COLORSETS = {
-          RAINBOWBRITE: new Array('#71c8bf', '#1ba554', '#cad93b', '#fef02f', '#fbb62c', '#f38a2e', '#ee592c', '#ea1d2b', '#b42767', '#65328f', '#52529f', '#20aeda'),
-          CMY: new Array('#FFE328', '#FF0E9B', '#20BECC'),
-          CMYK: new Array(''),
-          WHITE: new Array('#fff'),
-        };
-        
-        var BACKGROUND = {
-          default: '#000000',
-          colorset: COLORSETS.RAINBOWBRITE.slice(0),
-          togglePulse: function(){
-            if(this.color == this.default){
-              $('body').css('background', this.colorset[0]);
-              this.color = this.colorset[0];
-              this.colorset.push(this.colorset.shift());
-            }
-            else {
-              $('body').css('background', this.default);
-              this.color = this.default;
-            }
-            return this.color;
-          },
-        };
-        BACKGROUND.color = BACKGROUND.default;
-        
-        
-        var BARS = {
-          rotation: { 
-            speed: 0, 
-            quantity: 0 
-          },
-          colorset: COLORSETS.RAINBOWBRITE.slice(0),
-          objects: [],
-          init: function(){
-            var bar, material;
-            for(var xpos = 0; xpos < 12; xpos++ ){
-              geometry = new THREE.CubeGeometry( window.innerWidth/12, window.innerHeight, window.innerWidth/12 );
-          		material = new THREE.MeshBasicMaterial( { color: BARS.colorset[0], wireframe: true, wireframeLinewidth: 3, overdraw: true } );
-            
-              bar = new THREE.Mesh( geometry, material );
-            
-              bar.position.x = window.innerWidth/12*xpos-window.innerWidth/2+window.innerWidth/12/2;
-              // bar.rotation.x = 1/12*xpos;
-              this.colorset.push(this.colorset.shift());
-              scene.add(bar);
-              this.objects.push(bar);
-            }
-            this.rotateColors();
-          },
-          rotateColors: function(){
-            for(b in this.objects){
-              this.objects[b].material.color = new THREE.Color(COLORSETS.RAINBOWBRITE[0]);
-              COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
-            }
-            COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
-            setTimeout('rotateVerticalBarsColors();', 500);
-          },
-        };
-        
-
-        init();
-        animate();
-
-        function init() {
-
-            camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 1, 100000 );
-            camera.position.z = 10000;
-
-            scene = new THREE.Scene();
-
-            geometry = new THREE.CubeGeometry( 200, 200, 200 );
-            material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: false, wireframeLinewidth: 5, overdraw: true } );
-
-            mesh = new THREE.Mesh( geometry, material );
-            mesh.geometry.dynamic = true;
-            mesh.geometry.__dirtyVertices = true;
-            mesh.geometry.__dirtyNormals = true;
-            // scene.add( mesh );
-            
-            BARS.init();
-
-            renderer = new THREE.CanvasRenderer();
-            renderer.setSize( window.innerWidth, window.innerHeight );
-
-            document.body.appendChild( renderer.domElement );
-
-        }
-
-        function animate() {
-            
-            $('#debug').empty().append(JSON.stringify(navigator.webkitGetGamepads()[0]));
-            
-            
-            // note: three.js includes requestAnimationFrame shim
-            requestAnimationFrame( animate );
-
-            // mesh.rotation.x += 0.01;
-            // mesh.rotation.y += 0.02;
-            // console.log(navigator.webkitGetGamepads()[0].buttons[0]);
-            for(b in BARS.objects){
-              BARS.objects[b].rotation.x += BARS.rotation.speed;
-            }
-            
-            if(navigator.webkitGetGamepads()[0]){          
-              if(navigator.webkitGetGamepads()[0].buttons[5] == 1)
-                camera.rotation.x = camera.rotation.y = .01;
-              if(navigator.webkitGetGamepads()[0].buttons[4] == 1)
-                camera.position.x = camera.position.y = .5;
-              if(Math.abs(navigator.webkitGetGamepads()[0].axes[0]) >= .2)
-                camera.translateX(navigator.webkitGetGamepads()[0].axes[0].toFixed(1)*10)
-              if(Math.abs(navigator.webkitGetGamepads()[0].axes[1]) >= .2)
-                camera.translateZ(navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*100);
-              if(Math.abs(navigator.webkitGetGamepads()[0].axes[2]) >= .2)
-                camera.rotation.y += -navigator.webkitGetGamepads()[0].axes[2].toFixed(1)/100;
-              if(Math.abs(navigator.webkitGetGamepads()[0].axes[3]) >= .2)
-                camera.rotation.x += -navigator.webkitGetGamepads()[0].axes[3].toFixed(1)/100;
-                
-              if(navigator.webkitGetGamepads()[0].buttons[3] && !barsWireframe)
-                for(b in BARS.objects){ BARS.objects[b].material.wireframe = true; barsWireframe = true; }
-              else
-                for(b in BARS.objects){ BARS.objects[b].material.wireframe = false; barsWireframe = false; }
-                
-              if(navigator.webkitGetGamepads()[0].buttons[0] > 0)
-                BACKGROUND.togglePulse();
-                
-              console.log(navigator.webkitGetGamepads()[0].buttons[0]);
-                
-              if(navigator.webkitGetGamepads()[0].buttons[7] > 0)
-                for(b in BARS.objects){ BARS.objects[b].scale.y = 10*(1-navigator.webkitGetGamepads()[0].buttons[7]) }
-            }
-
-            renderer.render( scene, camera );
-
-        }
-        
-
-    </script>
+    
+    <div id="menu">
+      <ul>
+        <li><span class="selected">minusbaby</span></li>
+        <li><span>BR1GHT PR1MATE</span></li>
+        <li><span>Doctor Popular</span></li>
+        <li><span>Decktonic</span></li>
+        <li><span>Together We Are Robots</span></li>
+      </ul>
+    </div>
+    
     
     <script>
       if(window!==top){
@@ -172,8 +49,38 @@
       }
       // document.querySelector('#mode-visual').addEventListener('click',tester.updateMode,false);
       // document.querySelector('#mode-raw').addEventListener('click',tester.updateMode,false);
-      tester.init();
-      gamepadSupport.init();
+      // tester.init();
+      // gamepadSupport.init();
+      $(document).ready(function(){
+         gamepad = new Gamepad();
+    		if (!gamepad.init()) {
+    			alert('Your browser does not support gamepads, get the latest Google Chrome or Firefox.');
+    		}
+        
+        menu.init();
+        
+        
+        
+        var stats = new Stats();
+        stats.setMode(1); // 0: fps, 1: ms
+
+        // Align top-left
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.top = '0px';
+
+        document.body.appendChild( stats.domElement );
+
+        setInterval( function () {
+
+            stats.begin();
+
+            // your code goes here
+
+            // stats.end();
+
+        }, 1000 / 60 );
+      });
     </script>
   </body>
 </html>

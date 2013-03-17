@@ -1,3 +1,8 @@
+@font-face {
+  font-family:Outage;
+  src:url('../fonts/Outage Cut.ttf');
+}
+
 body {
   margin:0;
   padding:0;
@@ -15,6 +20,26 @@ body {
   top:0;
 }
 
-.goal {
-  
+#menu {
+/*  box-sizing:border-box;*/
+  margin:10% auto;
+}
+
+#menu li {
+  text-align:center;
+  color:#fff;
+  font-size:5em;
+  list-style:none;
+  font-family:Outage;
+  line-height:1em;
+  margin-bottom:1.5%;
+}
+
+#menu li span {
+  padding:10px 10px 0;
+}
+
+#menu li .selected {
+  background-color:#39fe1b;
+  color:#000;
 }
