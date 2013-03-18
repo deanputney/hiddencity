@@ -3,7 +3,7 @@
   src:url('../fonts/Outage Cut.ttf');
 }
 
-body {
+html, body {
   margin:0;
   padding:0;
   background:#000;
@@ -42,4 +42,8 @@ body {
 #menu li .selected {
   background-color:#39fe1b;
   color:#000;
+}
+
+#menu li .selected.flash {
+  background-color:#fa0199;
 }

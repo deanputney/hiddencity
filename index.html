@@ -51,14 +51,16 @@
       // document.querySelector('#mode-raw').addEventListener('click',tester.updateMode,false);
       // tester.init();
       // gamepadSupport.init();
+      var gamepad = new Gamepad();
       $(document).ready(function(){
-         gamepad = new Gamepad();
+        
+        
+        
     		if (!gamepad.init()) {
     			alert('Your browser does not support gamepads, get the latest Google Chrome or Firefox.');
     		}
         
         menu.init();
-        
         
         
         var stats = new Stats();

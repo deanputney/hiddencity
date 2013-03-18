@@ -1,4 +1,23 @@
-function BrightPrimate(){
+var BrightPrimate = function(){
+  var BACKGROUND = {
+    default: '#000000',
+    colorset: COLORSETS.RAINBOWBRITE.slice(0),
+    togglePulse: function(){
+      console.log('pulse');
+      if(this.color == this.default){
+        $('body').css('background', this.colorset[0]);
+        this.color = this.colorset[0];
+        this.colorset.push(this.colorset.shift());
+      }
+      else {
+        $('body').css('background', this.default);
+        this.color = this.default;
+      }
+      return this.color;
+    },
+  };
+  BACKGROUND.color = BACKGROUND.default;
+  
   var BARS = {
     rotation: { 
       speed: 0, 
@@ -29,9 +48,10 @@ function BrightPrimate(){
         COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
       }
       COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
-      setTimeout('rotateVerticalBarsColors();', 500);
+      // setTimeout('rotateVerticalBarsColors();', 500);
     },
     toggleWireframe: function(){
+      console.log('wireframe'+Date());
       for(b in BARS.objects){ BARS.objects[b].material.wireframe = !this.wireframe; }
       this.wireframe = !this.wireframe;
     }
@@ -68,6 +88,39 @@ function BrightPrimate(){
     renderer.setSize( window.innerWidth, window.innerHeight );
 
     document.body.appendChild( renderer.domElement );
+    
+    /* Gamepad binding */
+    
+    console.log('binding down');
+    gamepad.bind(Gamepad.Event.BUTTON_DOWN, function(e) {
+    	$('#log-' + e.gamepad.index).append('<li>' + e.control + ' [' + e.mapping + '] down</li>');
+      switch(e.control){
+        case 'A':
+          BACKGROUND.togglePulse();
+          break;
+        case 'Y':
+          BARS.toggleWireframe();
+          break;
+      }
+    });
+		
+    gamepad.bind(Gamepad.Event.BUTTON_UP, function(e) {
+      switch(e.control){
+        case 'A':
+          BACKGROUND.togglePulse();
+          break;
+        case 'Y':
+          BARS.toggleWireframe();
+          break;
+        case 'RB':
+          for(b in BARS.objects) {
+            BARS.objects[b].rotation.x += b/BARS.objects.length;
+          }
+          break;
+        case 'LB':
+          BARS.rotation.speed += 0.01;
+      }
+    });
 
   }
 
@@ -100,39 +153,4 @@ function BrightPrimate(){
 
   init();
   animate();
-
-
-
-  /* Gamepad binding */
-
-  gamepad.bind(Gamepad.Event.BUTTON_DOWN, function(e) {
-  	$('#log-' + e.gamepad.index).append('<li>' + e.control + ' [' + e.mapping + '] down</li>');
-    switch(e.control){
-      case 'A':
-        BACKGROUND.togglePulse();
-        break;
-      case 'Y':
-        BARS.toggleWireframe();
-        break;
-    }
-  });
-		
-  gamepad.bind(Gamepad.Event.BUTTON_UP, function(e) {
-  	$('#log-' + e.gamepad.index).append('<li>' + e.control + ' [' + e.mapping + '] up</li>');
-    switch(e.control){
-      case 'A':
-        BACKGROUND.togglePulse();
-        break;
-      case 'Y':
-        BARS.toggleWireframe();
-        break;
-      case 'RB':
-        for(b in BARS.objects) {
-          BARS.objects[b].rotation.x += b/BARS.objects.length;
-        }
-        break;
-      case 'LB':
-        BARS.rotation.speed += 0.01;
-    }
-  });
 }
