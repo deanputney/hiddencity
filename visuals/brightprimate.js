@@ -1,5 +1,5 @@
 var BrightPrimate = function(){
-  var BACKGROUND = {
+  this.BACKGROUND = {
     default: '#000000',
     colorset: COLORSETS.RAINBOWBRITE.slice(0),
     togglePulse: function(){
@@ -16,9 +16,9 @@ var BrightPrimate = function(){
       return this.color;
     },
   };
-  BACKGROUND.color = BACKGROUND.default;
+  this.BACKGROUND.color = this.BACKGROUND.default;
   
-  var BARS = {
+  this.BARS = {
     rotation: { 
       speed: 0, 
       quantity: 0 
@@ -30,7 +30,7 @@ var BrightPrimate = function(){
       var bar, material;
       for(var xpos = 0; xpos < 12; xpos++ ){
         geometry = new THREE.CubeGeometry( window.innerWidth/12, window.innerHeight, window.innerWidth/12 );
-    		material = new THREE.MeshBasicMaterial( { color: BARS.colorset[0], wireframe: false, wireframeLinewidth: 3, overdraw: true } );
+    		material = new THREE.MeshBasicMaterial( { color: this.colorset[0], wireframe: false, wireframeLinewidth: 3, overdraw: true } );
             
         bar = new THREE.Mesh( geometry, material );
             
@@ -57,7 +57,7 @@ var BrightPrimate = function(){
     }
   };
 
-  init = function() {
+  this.init = function() {
 
     camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 1, 100000 );
     camera.position.z = 4500;
@@ -75,7 +75,7 @@ var BrightPrimate = function(){
     mesh.geometry.__dirtyNormals = true;
     // scene.add( mesh );
             
-    BARS.init();
+    this.BARS.init();
             
     var planeW = 50; // pixels
     var planeH = 50; // pixels 
@@ -84,8 +84,22 @@ var BrightPrimate = function(){
     var plane = new THREE.Mesh( new THREE.PlaneGeometry( planeW*50, planeH*50, planeW, planeH ), new   THREE.MeshBasicMaterial( { color: 0xFFFFFF, wireframe: true } ) );
     scene.add(plane);
 
-    renderer = new THREE.CanvasRenderer();
+    renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
+    
+    // composer = SHADERS.init();
+    composer = new THREE.EffectComposer( renderer );
+    composer.addPass( new THREE.RenderPass( scene, camera ) );
+
+    var dotScreenEffect = new THREE.ShaderPass( THREE.DotScreenShader );
+    dotScreenEffect.uniforms[ 'scale' ].value = 1;
+    composer.addPass( dotScreenEffect );
+
+    var rgbEffect = new THREE.ShaderPass( THREE.RGBShiftShader );
+    rgbEffect.uniforms[ 'amount' ].value = 0;
+    rgbEffect.renderToScreen = true;
+    composer.addPass( rgbEffect );
+    console.log('shaders initialized');
 
     document.body.appendChild( renderer.domElement );
     
@@ -93,13 +107,12 @@ var BrightPrimate = function(){
     
     console.log('binding down');
     gamepad.bind(Gamepad.Event.BUTTON_DOWN, function(e) {
-    	$('#log-' + e.gamepad.index).append('<li>' + e.control + ' [' + e.mapping + '] down</li>');
       switch(e.control){
         case 'A':
-          BACKGROUND.togglePulse();
+          game.BACKGROUND.togglePulse();
           break;
         case 'Y':
-          BARS.toggleWireframe();
+          game.BARS.toggleWireframe();
           break;
       }
     });
@@ -107,33 +120,33 @@ var BrightPrimate = function(){
     gamepad.bind(Gamepad.Event.BUTTON_UP, function(e) {
       switch(e.control){
         case 'A':
-          BACKGROUND.togglePulse();
+          game.BACKGROUND.togglePulse();
           break;
         case 'Y':
-          BARS.toggleWireframe();
+          game.BARS.toggleWireframe();
           break;
         case 'RB':
-          for(b in BARS.objects) {
-            BARS.objects[b].rotation.x += b/BARS.objects.length;
+          for(b in game.BARS.objects) {
+            game.BARS.objects[b].rotation.x += b/game.BARS.objects.length;
           }
           break;
         case 'LB':
-          BARS.rotation.speed += 0.01;
+          game.BARS.rotation.speed += 0.01;
       }
     });
 
   }
 
-  animate = function() {            
+  this.animate = function() {            
             
     // note: three.js includes requestAnimationFrame shim
-    requestAnimationFrame( animate );
+    requestAnimationFrame( game.animate );
 
     // mesh.rotation.x += 0.01;
     // mesh.rotation.y += 0.02;
     // console.log(navigator.webkitGetGamepads()[0].buttons[0]);
-    for(b in BARS.objects){
-      BARS.objects[b].rotation.x += BARS.rotation.speed;
+    for(b in game.BARS.objects){
+      game.BARS.objects[b].rotation.x += game.BARS.rotation.speed;
     }
             
     if(navigator.webkitGetGamepads()[0]){          
@@ -147,10 +160,9 @@ var BrightPrimate = function(){
         camera.rotation.x += -navigator.webkitGetGamepads()[0].axes[3].toFixed(1)/100;
     }
 
-    renderer.render( scene, camera );
+    composer.render( );
 
   }
 
-  init();
-  animate();
+  this.init();
 }

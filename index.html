@@ -3,10 +3,37 @@
     <script type="text/javascript" src="js/gamepad.js"></script>
     <script type="text/javascript" src="js/tester.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/three.min.js"></script>
     <script type="text/javascript" src="js/jquery.hotkeys.js"></script>
     <script type="text/javascript" src="js/stats.min.js"></script>
     
+    <script type="text/javascript" src="three.js/build/three.min.js"></script>
+    <script type="text/javascript" src="three.js/examples/js/postprocessing/DotScreenPass.js"></script>
+    <script type="text/javascript" src="three.js/examples/js/postprocessing/DotScreenPass.js"></script>
+    <script src="three.js/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="three.js/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="three.js/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="three.js/examples/js/postprocessing/MaskPass.js"></script> 
+    <script src="three.js/examples/js/postprocessing/BloomPass.js"></script> 
+    <script src="three.js/examples/js/shaders/CopyShader.js"></script>
+
+    <script src="three.js/examples/js/shaders/BleachBypassShader.js"></script>
+    <script src="three.js/examples/js/shaders/ColorifyShader.js"></script>
+    <script src="three.js/examples/js/shaders/DotScreenShader.js"></script>
+    <script src="three.js/examples/js/shaders/BrightnessContrastShader.js"></script>
+    <script src="three.js/examples/js/shaders/ColorCorrectionShader.js"></script>
+    <script src="three.js/examples/js/shaders/ConvolutionShader.js"></script>
+    <script src="three.js/examples/js/shaders/FilmShader.js"></script>
+  
+    <script src="three.js/examples/js/shaders/FocusShader.js"></script>
+    <script src="three.js/examples/js/shaders/HorizontalBlurShader.js"></script>
+    <script src="three.js/examples/js/shaders/HueSaturationShader.js"></script>
+    <script src="three.js/examples/js/shaders/KaleidoShader.js"></script>
+    <script src="three.js/examples/js/shaders/LuminosityShader.js"></script>
+    <script src="three.js/examples/js/shaders/MirrorShader.js"></script>
+    <script src="three.js/examples/js/shaders/RGBShiftShader.js"></script>
+    <script src="three.js/examples/js/shaders/SepiaShader.js"></script>
+    <script src="three.js/examples/js/shaders/VerticalBlurShader.js"></script>
+    <script src="three.js/examples/js/shaders/VignetteShader.js"></script>
     
     <script type="text/javascript" src="visuals/defaults.js"></script>
     <script type="text/javascript" src="visuals/menu.js"></script>
@@ -56,11 +83,15 @@
         
         
         
-    		if (!gamepad.init()) {
-    			alert('Your browser does not support gamepads, get the latest Google Chrome or Firefox.');
-    		}
+        if (!gamepad.init()) {
+          alert('Your browser does not support gamepads, get the latest Google Chrome or Firefox.');
+        }
         
+        game = null;
         menu.init();
+        // $('#menu').hide();
+        // game = new MinusBaby();
+        
         
         
         var stats = new Stats();

@@ -88,6 +88,15 @@ var menu = {
       case 'minusbaby':
         menu.gameSelection = MinusBaby;
         break;
+      case 'doctor popular':
+        menu.gameSelection = DoctorPopular;
+        break;
+      case 'decktonic':
+        menu.gameSelection = Decktonic;
+        break;
+      case 'together we are robots':
+        menu.gameSelection = TogetherWeAreRobots;
+        break;
       default:
         return;
     }
@@ -108,7 +117,8 @@ var menu = {
       gamepad.unbind(Gamepad.Event.BUTTON_DOWN);
       gamepad.unbind(Gamepad.Event.BUTTON_UP);
       
-      var game = new gameSelection();
+      game = new gameSelection();
+      game.animate();
       $('body').fadeIn(1000);
     });
   }
