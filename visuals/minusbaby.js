@@ -126,7 +126,7 @@ var MinusBaby = function(){
   
   this.init = function(){
     camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 1, 100000 );
-    camera.position.z = 4500;
+    camera.position.z = 90000;
     camera.velocity = { x:0, y:0, z:0 };
     camera.rotational_velocity = { x:0, y:0 };
 
@@ -162,10 +162,19 @@ var MinusBaby = function(){
     gamepad.bind(Gamepad.Event.BUTTON_DOWN, function(e) {
       switch(e.control){
         case 'A':
-          BACKGROUND.togglePulse();
+          camera.translateZ(-Math.abs(camera.position.z)/5);
+          break;
+        case 'B':
+          camera.translateZ(-Math.abs(camera.position.z)/3);
           break;
         case 'Y':
           BARS.toggleWireframe();
+          break;
+        case 'DPAD_UP':
+          game.ZFIGHTERS.rotation.speed += .005;
+          break;
+        case 'DPAD_DOWN':
+          game.ZFIGHTERS.rotation.speed -= .005;
           break;
       }
     });
@@ -173,7 +182,10 @@ var MinusBaby = function(){
     gamepad.bind(Gamepad.Event.BUTTON_UP, function(e) {
       switch(e.control){
         case 'A':
-          BACKGROUND.togglePulse();
+          camera.translateZ(Math.abs(camera.position.z)/4);
+          break;
+        case 'B':
+          camera.translateZ(Math.abs(camera.position.z)/2);
           break;
         case 'Y':
           BARS.toggleWireframe();
@@ -199,15 +211,15 @@ var MinusBaby = function(){
     // mesh.rotation.y += 0.02;
     // console.log(navigator.webkitGetGamepads()[0].buttons[0]);
     
-    game.ZFIGHTERS.objects[0].rotation.z += .005;
-    game.ZFIGHTERS.objects[1].rotation.z += -.005;
+    game.ZFIGHTERS.objects[0].rotation.z += game.ZFIGHTERS.rotation.speed;
+    game.ZFIGHTERS.objects[1].rotation.z += -game.ZFIGHTERS.rotation.speed;
     
             
     if(navigator.webkitGetGamepads()[0]){          
-      if(Math.abs(navigator.webkitGetGamepads()[0].axes[0]) >= .2)
-        game.ZFIGHTERS.objects[0].position.x = navigator.webkitGetGamepads()[0].axes[0].toFixed(1)*10;
-      if(Math.abs(navigator.webkitGetGamepads()[0].axes[1]) >= .2)
-        game.ZFIGHTERS.objects[0].position.y = navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*100;
+      // if(Math.abs(navigator.webkitGetGamepads()[0].axes[0]) >= .2)
+        // game.ZFIGHTERS.objects[0].position.x = navigator.webkitGetGamepads()[0].axes[0].toFixed(1)*100;
+      if(Math.abs(navigator.webkitGetGamepads()[0].axes[1]) >= .1)
+        camera.translateZ(Math.abs(navigator.webkitGetGamepads()[0].axes[1].toFixed(1))*navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*500);
       if(Math.abs(navigator.webkitGetGamepads()[0].axes[2]) >= .2)
         game.ZFIGHTERS.objects[1].position.x = navigator.webkitGetGamepads()[0].axes[2].toFixed(1)/100;
       if(Math.abs(navigator.webkitGetGamepads()[0].axes[3]) >= .2)
