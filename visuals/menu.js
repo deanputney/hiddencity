@@ -59,6 +59,13 @@ var menu = {
     gamepad.bind(Gamepad.Event.BUTTON_UP, function(e) {
       console.log('button up');
     });
+    
+    $(document).bind('keydown', 'w', function(){menu.previous();});
+    $(document).bind('keydown', 's', function(){menu.next();});
+    $(document).bind('keydown', 'up', function(){menu.previous();});
+    $(document).bind('keydown', 'down', function(){menu.next();});
+    $(document).bind('keydown', 'return', function(){menu.select();});
+    
   },
   
   selected: 1,
@@ -116,6 +123,19 @@ var menu = {
       $('#menu').hide();
       gamepad.unbind(Gamepad.Event.BUTTON_DOWN);
       gamepad.unbind(Gamepad.Event.BUTTON_UP);
+      /* gamepad.bind(Gamepad.Event.BUTTON_DOWN, function(e) {
+        switch(e.control){
+          case 'START':
+            $('canvas').fadeOut(1000, function(){
+              game = null;
+              gamepad.unbind(Gamepad.Event.BUTTON_DOWN);
+              gamepad.unbind(Gamepad.Event.BUTTON_UP);
+              menu.init();
+              $('#menu').fadeIn(1000);
+            });
+            break;
+        }
+      }); */
       
       game = new gameSelection();
       game.animate();

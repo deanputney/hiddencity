@@ -29,7 +29,7 @@ var BrightPrimate = function(){
     init: function(){
       var bar, material;
       for(var xpos = 0; xpos < 12; xpos++ ){
-        geometry = new THREE.CubeGeometry( window.innerWidth/12, window.innerHeight, window.innerWidth/12 );
+        geometry = new THREE.CubeGeometry( window.innerWidth/12, 1000000, window.innerWidth/12 );
     		material = new THREE.MeshBasicMaterial( { color: this.colorset[0], wireframe: false, wireframeLinewidth: 3, overdraw: true } );
             
         bar = new THREE.Mesh( geometry, material );
@@ -52,7 +52,7 @@ var BrightPrimate = function(){
     },
     toggleWireframe: function(){
       console.log('wireframe'+Date());
-      for(b in BARS.objects){ BARS.objects[b].material.wireframe = !this.wireframe; }
+      for(b in game.BARS.objects){ game.BARS.objects[b].material.wireframe = !this.wireframe; }
       this.wireframe = !this.wireframe;
     }
   };
@@ -63,6 +63,15 @@ var BrightPrimate = function(){
     camera.position.z = 4500;
     camera.velocity = { x:0, y:0, z:0 };
     camera.rotational_velocity = { x:0, y:0 };
+    camera.orbit = {
+      speed: 0,
+      step: function(){
+        var distance = camera.position.distanceTo({x:0,y:0,z:0});
+        camera.translateX(this.speed);
+        camera.lookAt({x:0,y:0,z:0});
+        camera.translateZ(camera.position.distanceTo({x:0,y:0,z:0})-distance);
+      }
+    };
 
     scene = new THREE.Scene();
 
@@ -77,12 +86,12 @@ var BrightPrimate = function(){
             
     this.BARS.init();
             
-    var planeW = 50; // pixels
-    var planeH = 50; // pixels 
-    var numW = 50; // how many wide (50*50 = 2500 pixels wide)
-    var numH = 50; // how many tall (50*50 = 2500 pixels tall)
-    var plane = new THREE.Mesh( new THREE.PlaneGeometry( planeW*50, planeH*50, planeW, planeH ), new   THREE.MeshBasicMaterial( { color: 0xFFFFFF, wireframe: true } ) );
-    scene.add(plane);
+    // var planeW = 50; // pixels
+    // var planeH = 50; // pixels 
+    // var numW = 50; // how many wide (50*50 = 2500 pixels wide)
+    // var numH = 50; // how many tall (50*50 = 2500 pixels tall)
+    // var plane = new THREE.Mesh( new THREE.PlaneGeometry( planeW*50, planeH*50, planeW, planeH ), new   THREE.MeshBasicMaterial( { color: 0xFFFFFF, wireframe: true } ) );
+    // scene.add(plane);
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -91,9 +100,9 @@ var BrightPrimate = function(){
     composer = new THREE.EffectComposer( renderer );
     composer.addPass( new THREE.RenderPass( scene, camera ) );
 
-    var dotScreenEffect = new THREE.ShaderPass( THREE.DotScreenShader );
-    dotScreenEffect.uniforms[ 'scale' ].value = 1;
-    composer.addPass( dotScreenEffect );
+    // var dotScreenEffect = new THREE.ShaderPass( THREE.DotScreenShader );
+    // dotScreenEffect.uniforms[ 'scale' ].value = 0;
+    // composer.addPass( dotScreenEffect );
 
     var rgbEffect = new THREE.ShaderPass( THREE.RGBShiftShader );
     rgbEffect.uniforms[ 'amount' ].value = 0;
@@ -108,21 +117,28 @@ var BrightPrimate = function(){
     console.log('binding down');
     gamepad.bind(Gamepad.Event.BUTTON_DOWN, function(e) {
       switch(e.control){
-        case 'A':
-          game.BACKGROUND.togglePulse();
-          break;
         case 'Y':
           game.BARS.toggleWireframe();
+          break;
+        case 'X':
+          game.BARS.toggleWireframe();
+          break;
+        case 'B':
+          console.log('color shift');
+          game.BARS.colorset.push(game.BARS.colorset.shift());
+          for(var xpos = 0; xpos < 12; xpos++ ){
+            game.BARS.objects[xpos].material =  new THREE.MeshBasicMaterial( { color: game.BARS.colorset[xpos], wireframe: false, wireframeLinewidth: 3, overdraw: true } );
+          }
+          break;
+        case 'BACK':
+          window.location = window.location;
           break;
       }
     });
 		
     gamepad.bind(Gamepad.Event.BUTTON_UP, function(e) {
       switch(e.control){
-        case 'A':
-          game.BACKGROUND.togglePulse();
-          break;
-        case 'Y':
+        case 'X':
           game.BARS.toggleWireframe();
           break;
         case 'RB':
@@ -131,10 +147,37 @@ var BrightPrimate = function(){
           }
           break;
         case 'LB':
+          for(b in game.BARS.objects) {
+            game.BARS.objects[b].rotation.x -= b/game.BARS.objects.length;
+          }
+          break;
+        case 'DPAD_UP':
           game.BARS.rotation.speed += 0.01;
+          break;
+        case 'DPAD_DOWN':
+          game.BARS.rotation.speed -= 0.01;
+          break;
+        case 'DPAD_RIGHT':
+          camera.orbit.speed += 10;
+          break;
+        case 'DPAD_LEFT':
+          camera.orbit.speed -= 10;
+          break;
       }
     });
-
+    
+    $(document).bind('keydown', 'p', function(){game.BACKGROUND.togglePulse();});
+    $(document).bind('keydown', 'o', function(){game.BARS.toggleWireframe();});
+    $(document).bind('keydown', 'l', function(){
+      for(b in game.BARS.objects) {
+          game.BARS.objects[b].rotation.x += b/game.BARS.objects.length;
+        }
+      });
+    $(document).bind('keydown', 'j', function(){game.BARS.rotation.speed += 0.01;});
+    $(document).bind('keydown', 'k', function(){game.BARS.rotation.speed -= 0.01;});
+    $(document).bind('keydown', 'e', function(){camera.lookAt({x:0,y:0,z:0})});
+    $(document).bind('keydown', 'w', function(){camera.translateZ(-500);});
+    $(document).bind('keydown', 's', function(){camera.translateZ(500);});
   }
 
   this.animate = function() {            
@@ -159,6 +202,8 @@ var BrightPrimate = function(){
       if(Math.abs(navigator.webkitGetGamepads()[0].axes[3]) >= .2)
         camera.rotation.x += -navigator.webkitGetGamepads()[0].axes[3].toFixed(1)/100;
     }
+    
+    if(Math.abs(camera.orbit.speed) > 0) camera.orbit.step();
 
     composer.render( );
 

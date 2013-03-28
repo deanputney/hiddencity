@@ -114,7 +114,7 @@ var MinusBaby = function(){
       dotScreenEffect.uniforms[ 'scale' ].value = 4;
       composer.addPass( dotScreenEffect );
 
-      var rgbEffect = new THREE.ShaderPass( THREE.RGBShiftShader );
+      this.rgbEffect = new THREE.ShaderPass( THREE.RGBShiftShader );
       rgbEffect.uniforms[ 'amount' ].value = 0.0015;
       rgbEffect.renderToScreen = true;
       composer.addPass( rgbEffect );
@@ -129,6 +129,15 @@ var MinusBaby = function(){
     camera.position.z = 90000;
     camera.velocity = { x:0, y:0, z:0 };
     camera.rotational_velocity = { x:0, y:0 };
+    camera.orbit = {
+      speed: 0,
+      step: function(){
+        var distance = camera.position.distanceTo({x:0,y:0,z:0});
+        camera.translateX(this.speed);
+        camera.lookAt({x:0,y:0,z:0});
+        camera.translateZ(camera.position.distanceTo({x:0,y:0,z:0})-distance);
+      }
+    };
 
     scene = new THREE.Scene();
                 
@@ -142,14 +151,14 @@ var MinusBaby = function(){
     composer = new THREE.EffectComposer( renderer );
     composer.addPass( new THREE.RenderPass( scene, camera ) );
 
-    var dotScreenEffect = new THREE.ShaderPass( THREE.DotScreenShader );
-    dotScreenEffect.uniforms[ 'scale' ].value = 1;
+    this.dotScreenEffect = new THREE.ShaderPass( THREE.DotScreenShader );
+    this.dotScreenEffect.uniforms[ 'scale' ].value = 0;
     // composer.addPass( dotScreenEffect );
 
-    var rgbEffect = new THREE.ShaderPass( THREE.RGBShiftShader );
-    rgbEffect.uniforms[ 'amount' ].value = 0;
-    rgbEffect.renderToScreen = true;
-    composer.addPass( rgbEffect );
+    this.rgbEffect = new THREE.ShaderPass( THREE.RGBShiftShader );
+    this.rgbEffect.uniforms[ 'amount' ].value = 0;
+    this.rgbEffect.renderToScreen = true;
+    composer.addPass( this.rgbEffect );
     console.log('shaders initialized');
 
     document.body.appendChild( renderer.domElement );
@@ -168,13 +177,42 @@ var MinusBaby = function(){
           camera.translateZ(-Math.abs(camera.position.z)/3);
           break;
         case 'Y':
-          BARS.toggleWireframe();
+          if(game.rgbEffect.uniforms[ 'amount' ].value > 0){
+            game.rgbEffect.uniforms[ 'amount' ].value = 0;
+          }
+          else{
+            game.rgbEffect.uniforms[ 'amount' ].value = 0.03;
+          }
+          break;
+        case 'X':
+          game.rgbEffect.uniforms[ 'amount' ].value = 0.01;
           break;
         case 'DPAD_UP':
           game.ZFIGHTERS.rotation.speed += .005;
           break;
         case 'DPAD_DOWN':
           game.ZFIGHTERS.rotation.speed -= .005;
+          break;
+        case 'DPAD_RIGHT':
+          camera.orbit.speed += 10;
+          break;
+        case 'DPAD_LEFT':
+          camera.orbit.speed -= 10;
+          break;
+        case 'BACK':
+          window.location = window.location;
+          break;
+        case 'START':
+          game.ZFIGHTERS.rotation.speed = 0;
+          game.ZFIGHTERS.objects[0].rotation.z = 0;
+          game.ZFIGHTERS.objects[1].rotation.z = 0;
+          break;
+        case 'RB':
+          game.ZFIGHTERS.objects[0].rotation.z = 0;
+          game.ZFIGHTERS.objects[1].rotation.z = 0;
+          break;
+        case 'LB':
+          camera.orbit.speed = 0;
           break;
       }
     });
@@ -188,15 +226,14 @@ var MinusBaby = function(){
           camera.translateZ(Math.abs(camera.position.z)/2);
           break;
         case 'Y':
-          BARS.toggleWireframe();
+          break;
+        case 'X':
+          game.rgbEffect.uniforms[ 'amount' ].value = 0;
           break;
         case 'RB':
-          for(b in BARS.objects) {
-            BARS.objects[b].rotation.x += b/BARS.objects.length;
-          }
           break;
         case 'LB':
-          BARS.rotation.speed += 0.01;
+          break;
       }
     });
   }
@@ -213,6 +250,8 @@ var MinusBaby = function(){
     
     game.ZFIGHTERS.objects[0].rotation.z += game.ZFIGHTERS.rotation.speed;
     game.ZFIGHTERS.objects[1].rotation.z += -game.ZFIGHTERS.rotation.speed;
+    
+    if(Math.abs(camera.orbit.speed) > 0) camera.orbit.step();
     
             
     if(navigator.webkitGetGamepads()[0]){          

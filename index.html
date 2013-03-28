@@ -35,6 +35,8 @@
     <script src="three.js/examples/js/shaders/VerticalBlurShader.js"></script>
     <script src="three.js/examples/js/shaders/VignetteShader.js"></script>
     
+    <script type="text/javascript" src="tween.js/build/tween.min.js"></script>
+    
     <script type="text/javascript" src="visuals/defaults.js"></script>
     <script type="text/javascript" src="visuals/menu.js"></script>
     <script type="text/javascript" src="visuals/minusbaby.js"></script>
@@ -80,9 +82,7 @@
       // gamepadSupport.init();
       var gamepad = new Gamepad();
       $(document).ready(function(){
-        
-        
-        
+                
         if (!gamepad.init()) {
           alert('Your browser does not support gamepads, get the latest Google Chrome or Firefox.');
         }
@@ -91,11 +91,9 @@
         menu.init();
         // $('#menu').hide();
         // game = new MinusBaby();
-        
-        
-        
-        var stats = new Stats();
-        stats.setMode(1); // 0: fps, 1: ms
+                
+       /* var stats = new Stats();
+        stats.setMode(0); // 0: fps, 1: ms
 
         // Align top-left
         stats.domElement.style.position = 'absolute';
@@ -110,9 +108,9 @@
 
             // your code goes here
 
-            // stats.end();
+            stats.end();
 
-        }, 1000 / 60 );
+        }, 1000 / 60 ); */
       });
     </script>
   </body>
