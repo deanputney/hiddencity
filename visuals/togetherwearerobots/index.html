@@ -8,7 +8,7 @@
 	<style>
       @font-face {
         font-family:Outage;
-        src:url('../../fonts/Lavanderia-Sturdy.otf');
+        src:url('../../fonts/Outage Cut.ttf');
       }
 			body {
 				background-color: #000;
@@ -50,7 +50,7 @@
 <body>
   
   <div id="bandname">
-    Doctor Popular
+    TOGETHER WE ARE ROBOTS
   </div>
 
 	<div id="container"></div>
@@ -118,7 +118,7 @@
 				video.loop = true;
         video.muted = "muted";
         video.volume = 0;
-				video.src = "media/coffeecrop1.mp4";
+				video.src = "media/nao/1.mov";
 				video.play();
 
 
@@ -263,19 +263,22 @@
         // randomizeParams();
         
         videoMedia = {
-          sanfrancisco: {
+          nao: {
             media: [
-              'media/sanfrancisco/1.mov',
-              'media/sanfrancisco/2.mov',
-              'media/sanfrancisco/3.mov',
-              'media/sanfrancisco/4.mov',
-              'media/sanfrancisco/5.mov',
-              'media/sanfrancisco/6.mov',
-              'media/sanfrancisco/7.mov',
-              'media/sanfrancisco/8.mov',
-              'media/sanfrancisco/9.mov',
-              'media/sanfrancisco/10.mov',
-              'media/sanfrancisco/11.mov',
+              'media/nao/1.mov',
+              'media/nao/2.mov',
+              'media/nao/3.mov',
+              'media/nao/4.mov',
+              'media/nao/5.mov',
+              'media/nao/6.mov',
+              'media/nao/7.mov',
+              'media/nao/8.mov',
+              'media/nao/9.mov',
+              'media/nao/10.mov',
+              'media/nao/11.mov',
+              'media/nao/12.mov',
+              'media/nao/13.mov',
+              'media/nao/14.mov',
               ],
             index: 0
           },
@@ -308,7 +311,7 @@
             return videoMedia.set.media[videoMedia.set.index];
           }
         }
-        videoMedia.set = videoMedia.sanfrancisco;
+        videoMedia.set = videoMedia.nao;
         
         /* Gamepad binding */
         
