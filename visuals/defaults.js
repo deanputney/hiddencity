@@ -77,3 +77,47 @@ COLORSET = {
       this.INDEX = this.CURRENT.length-1;
   }
 }
+
+
+StandardObjects = [
+	{ 
+		name: "sphere", 
+		create: function () { return new THREE.SphereGeometry( 75, 20, 10 ) }
+	},
+	
+	{ 
+		name: "icos", 
+		create: function () { return new THREE.IcosahedronGeometry( 75, 1 ) }
+	},
+	
+	{ 
+		name: "octo", 
+		create: function () { return new THREE.OctahedronGeometry( 75, 2 ) }
+	},
+
+	{ 
+		name: "tetra", 
+		create: function () { return new THREE.TetrahedronGeometry( 75, 0 ) }
+	},
+	
+	{ 
+		name: "octo", 
+		create: function () { return new THREE.OctahedronGeometry( 75, 2 ) }
+	},
+	
+	{ 
+		name: "cube", 
+		create: function () { return new THREE.CubeGeometry( 100, 100, 100, 4, 4, 4 ) }
+	},
+	
+	{ 
+		name: "cylinder", 
+		create: function () { return new THREE.CylinderGeometry( 25, 75, 100, 40, 5 ) }
+	},
+	
+	{ 
+		name: "torus", 
+		create: function () { return new THREE.TorusGeometry( 50, 20, 20, 20 ) }
+	}
+	
+]

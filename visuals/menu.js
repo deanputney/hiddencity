@@ -102,7 +102,7 @@ var menu = {
         menu.gameSelection = Decktonic;
         break;
       case 'together we are robots':
-        menu.gameSelection = TogetherWeAreRobots;
+        window.location = window.location.href.replace('index.html', '')+'visuals/_steve.html';
         break;
       default:
         return;
