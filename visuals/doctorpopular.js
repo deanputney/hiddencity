@@ -22,12 +22,22 @@ var DoctorPopular = function(){
     init: function(){
     	var materialArray = [];
       console.log('loading');
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
+      
+			video = document.getElementById( 'img1' );
+      video.src = 'visuals/doctorpopular/defenestration.gif';
+			texture = new THREE.Texture( video );
+			texture.minFilter = THREE.LinearFilter;
+			texture.magFilter = THREE.LinearFilter;
+			texture.format = THREE.RGBFormat;
+			texture.generateMipmaps = false;
+      
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
+
       console.log('loaded');
       
     	for (var i = 0; i < 6; i++)
