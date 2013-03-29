@@ -74,7 +74,10 @@
       </ul>
     </div>
     
-    <img id="img1" src="" style="display:none;"/>
+		<video id="video" autoplay loop style="display:none">
+			<source src="visuals/doctorpopular/defenestration.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+		</video>
+    
     
     <script>
       if(window!==top){
@@ -93,8 +96,9 @@
         
         game = null;
         menu.init();
-        // $('#menu').hide();
-        // game = new MinusBaby();
+        $('#menu').hide();
+        game = new DoctorPopular();
+        game.animate();
                 
        /* var stats = new Stats();
         stats.setMode(0); // 0: fps, 1: ms

@@ -17,40 +17,6 @@ var DoctorPopular = function(){
   };
   this.BACKGROUND.color = this.BACKGROUND.default;
   
-  this.SKYBOX = {
-    objects: [],
-    init: function(){
-    	var materialArray = [];
-      console.log('loading');
-      
-			video = document.getElementById( 'img1' );
-      video.src = 'visuals/doctorpopular/defenestration.gif';
-			texture = new THREE.Texture( video );
-			texture.minFilter = THREE.LinearFilter;
-			texture.magFilter = THREE.LinearFilter;
-			texture.format = THREE.RGBFormat;
-			texture.generateMipmaps = false;
-      
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
-    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/defenestration.gif' ) }));
-
-      console.log('loaded');
-      
-    	for (var i = 0; i < 6; i++)
-    	   materialArray[i].side = THREE.BackSide;
-    	var skyboxMaterial = new THREE.MeshFaceMaterial( materialArray );
-	
-    	var skyboxGeom = new THREE.CubeGeometry( 5000, 5000, 5000, 1, 1, 1 );
-	
-    	var skybox = new THREE.Mesh( skyboxGeom, skyboxMaterial );
-    	scene.add( skybox );	
-    }
-  };
-  
   
   this.SHADERS = {
     objects: [],
@@ -75,9 +41,10 @@ var DoctorPopular = function(){
   
   this.init = function(){
     camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 1, 100000 );
-    camera.position.z = 90000;
+    camera.position.z = 2500;
     camera.velocity = { x:0, y:0, z:0 };
     camera.rotational_velocity = { x:0, y:0 };
+    camera.lookAt({x:0,y:0,z:0});
     camera.orbit = {
       speed: 0,
       step: function(){
@@ -91,7 +58,68 @@ var DoctorPopular = function(){
     scene = new THREE.Scene();
                 
     // BARS.init();
-    this.SKYBOX.init();
+    
+    // create the video element
+    	video = document.createElement( 'video' );
+    	// video.id = 'video';
+    	// video.type = ' video/ogg; codecs="theora, vorbis" ';
+    	video.src = "visuals/doctorpopular/defenestration.mp4";
+      video.loop = 'true';
+    	video.load(); // must call after setting/changing source
+    	video.play();
+	
+    	// alternative method -- 
+    	// create DIV in HTML:
+    	// <video id="myVideo" autoplay style="display:none">
+    	//		<source src="videos/sintel.ogv" type='video/ogg; codecs="theora, vorbis"'>
+    	// </video>
+    	// and set JS variable:
+    	// video = document.getElementById( 'myVideo' );
+	
+    	videoImage = document.createElement( 'canvas' );
+    	videoImage.width = window.innerWidth;
+    	videoImage.height = window.innerHeight;
+
+    	videoImageContext = videoImage.getContext( '2d' );
+    	// background color if no video present
+    	videoImageContext.fillStyle = '#000000';
+    	videoImageContext.fillRect( 0, 0, videoImage.width, videoImage.height );
+
+    	videoTexture = new THREE.Texture( videoImage );
+    	videoTexture.minFilter = THREE.LinearFilter;
+    	videoTexture.magFilter = THREE.LinearFilter;
+	
+    	var movieMaterial = new THREE.MeshBasicMaterial( { map: videoTexture, overdraw: true, side:THREE.DoubleSide } );
+    	// the geometry on which the movie will be displayed;
+    	// 		movie image will be scaled to fit these dimensions.
+    	var movieGeometry = new THREE.PlaneGeometry( 200, 200, 4, 4 );
+    	 movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
+    	movieScreen.position.set(0,0,0);
+    	scene.add(movieScreen);
+      
+      
+      
+      
+      var planeW = 50; // pixels
+      var planeH = 50; // pixels 
+      var numW = 50; // how many wide (50*50 = 2500 pixels wide)
+      var numH = 50; // how many tall (50*50 = 2500 pixels tall)
+      var plane = new THREE.Mesh( new THREE.PlaneGeometry( planeW*50, planeH*50, planeW, planeH ), new   THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true, wireframeLinewidth: 5, overdraw: true } ) );
+      scene.add(plane);
+      plane.position.z += .01;
+      
+      geometry = new THREE.CubeGeometry( window.innerWidth, window.innerHeight, .01 );
+  		material = new THREE.MeshBasicMaterial( { color: '#fff', wireframe: false, wireframeLinewidth: 3, overdraw: true } );
+          
+      // bar = new THREE.Mesh( geometry, material );
+      // scene.add(bar);
+      // this.objects.push(bar);
+      
+      var plane = new THREE.Mesh( new THREE.PlaneGeometry( planeW*50, planeH*50, planeW, planeH ), new   THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true, wireframeLinewidth: 5, overdraw: true } ) );
+      scene.add(plane);
+    
+      
+      
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -198,6 +226,12 @@ var DoctorPopular = function(){
     // console.log(navigator.webkitGetGamepads()[0].buttons[0]);
     
     if(Math.abs(camera.orbit.speed) > 0) camera.orbit.step();
+  	if ( video.readyState === video.HAVE_ENOUGH_DATA ) 
+  	{
+  		videoImageContext.drawImage( video, 0, 0 );
+  		if ( videoTexture ) 
+  			videoTexture.needsUpdate = true;
+  	}
     
             
     if(navigator.webkitGetGamepads()[0]){          
@@ -205,12 +239,13 @@ var DoctorPopular = function(){
         // game.ZFIGHTERS.objects[0].position.x = navigator.webkitGetGamepads()[0].axes[0].toFixed(1)*100;
       if(Math.abs(navigator.webkitGetGamepads()[0].axes[1]) >= .1)
         camera.translateZ(Math.abs(navigator.webkitGetGamepads()[0].axes[1].toFixed(1))*navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*500);
-      if(Math.abs(navigator.webkitGetGamepads()[0].axes[2]) >= .2)
-        game.ZFIGHTERS.objects[1].position.x = navigator.webkitGetGamepads()[0].axes[2].toFixed(1)/100;
-      if(Math.abs(navigator.webkitGetGamepads()[0].axes[3]) >= .2)
-        game.ZFIGHTERS.objects[1].position.y = navigator.webkitGetGamepads()[0].axes[3].toFixed(1)/100;
+      // if(Math.abs(navigator.webkitGetGamepads()[0].axes[2]) >= .2)
+      //   game.ZFIGHTERS.objects[1].position.x = navigator.webkitGetGamepads()[0].axes[2].toFixed(1)/100;
+      // if(Math.abs(navigator.webkitGetGamepads()[0].axes[3]) >= .2)
+      //   game.ZFIGHTERS.objects[1].position.y = navigator.webkitGetGamepads()[0].axes[3].toFixed(1)/100;
     }
-
+    
+    renderer.clear();
     composer.render( );
 
   }
