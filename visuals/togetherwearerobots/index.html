@@ -41,7 +41,7 @@
         text-align:center;
         width:100%;
         height:20%;
-        margin:20% 0;
+        margin:10% 0;
         font-family:Outage;
         font-size:170px;
       }
@@ -280,7 +280,7 @@
               'media/nao/13.mov',
               'media/nao/14.mov',
               ],
-            index: -1
+            index: 0
           },
           fanta: {
             media: [
@@ -344,10 +344,11 @@
               break;
             case 'Y':
               staticParams.show = !staticParams.show;
+              filmParams.show = !filmParams.show;
               onToggleShaders();
               break;
             case 'X':
-              filmParams.show = !filmParams.show;
+              camera.position.z = camera.position.z-camera.position.z/10;
               onToggleShaders();
               break;
             case 'DPAD_UP':
@@ -365,6 +366,7 @@
               window.location = window.location;
               break;
             case 'START':
+              randomizeParams();
               break;
             case 'RB':
               video.src = videoMedia.next();
@@ -384,12 +386,17 @@
         gamepad.bind(Gamepad.Event.BUTTON_UP, function(e) {
           switch(e.control){
             case 'A':
+              $('#bandname').toggle();
               break;
             case 'B':
               break;
             case 'Y':
+              staticParams.show = !staticParams.show;
+              filmParams.show = !filmParams.show;
+              onToggleShaders();
               break;
             case 'X':
+              camera.position.z = camera.position.z+camera.position.z/9;
               break;
             case 'RB':
               break;
@@ -496,8 +503,8 @@
               badTVParams.show = true;
               onToggleShaders();
             }
-            badTVParams.speed = navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*.4;
-            badTVParams.rollSpeed = navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*.4;
+            badTVParams.speed = navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*.5;
+            badTVParams.rollSpeed = navigator.webkitGetGamepads()[0].axes[1].toFixed(1)*.5;
           }
           else{
             if(badTVParams.show){
@@ -522,6 +529,34 @@
           }
           
           
+          
+          if(Math.abs(navigator.webkitGetGamepads()[0].axes[2]) >= .2){
+            if(!rgbParams.show){
+              rgbParams.show = true;
+              onToggleShaders();
+            }
+            rgbParams.amount = navigator.webkitGetGamepads()[0].axes[2].toFixed(1)*.5;
+          }
+          else{
+            if(rgbParams.show){
+              rgbParams.show = false;
+              onToggleShaders();
+            }
+          }
+          
+          if(Math.abs(navigator.webkitGetGamepads()[0].axes[3]) >= .2){
+            if(!rgbParams.show){
+              rgbParams.show = true;
+              onToggleShaders();
+            }
+            rgbParams.angle = navigator.webkitGetGamepads()[0].axes[3].toFixed(1)*2;
+          }
+          else{
+            if(rgbParams.show){
+              rgbParams.show = false;
+              onToggleShaders();
+            }
+          }
         }
 
 				requestAnimationFrame( animate );

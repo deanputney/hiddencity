@@ -5,15 +5,32 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
+    @font-face{
+      font-family:Saturn;
+      src:url('../fonts/Venera-900.otf');
+    }
 			body {
 				font-family: Monospace;
 				background-color: #000;
 				margin: 0px;
 				overflow: hidden;
 			}
+      #bandname{
+        font-family:Saturn;
+        position:fixed;
+        color:white;
+        text-align:center;
+        width:100%;
+        height:20%;
+        margin:20% 0;
+        font-size:100px;
+      }
 		</style>
 	</head>
 	<body>
+    <div id="bandname">
+      DECKTRONIC
+    </div>
     	<script type="text/javascript" src="../js/jquery.min.js"></script>
     	<script type="text/javascript" src="../js/jquery.hotkeys.js"></script>
     	<script type="text/javascript" src="../js/gamepad.js"></script>
@@ -362,6 +379,19 @@ x & y & spin rot speed
 			    $(document).bind('keydown', 'x', function(e){ rotZV = 0 })
 			    $(document).bind('keydown', 'c', function(e){ rotZV = -1 })
 			    $(document).bind('keydown', 'b', function(e){ rotPlane = !rotPlane })
+          
+          $(document).bind('keydown', '1', function(e){
+            $('#bandname').toggle();
+         });
+        
+          $(document).bind('keyup', '1', function(e){
+            $('#bandname').toggle();
+         });
+        
+           $(document).bind('keyup', 'shift+1', function(e){
+             $('#bandname').toggle();
+          });
+          
 			/*
 			    $(document).bind('keydown', 'c', function(e){ mainLight.position.set( 0, 1, 0 ); })
 			    $(document).bind('keydown', 'v', function(e){ mainLight.position.set( 1, 0, 0 ); })
