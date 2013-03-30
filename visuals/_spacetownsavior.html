@@ -229,15 +229,15 @@
 					pulseColors()
 				}
 				
-				if (crazy4 && camz < .1) 
+				if (crazy4 && camz < .01) 
 				{
 					if(camz == 0) { camz = .001 }
-					camz *= 2
+					camz *= 1.1
 				}
 				
 				if (!crazy4 && camz > 0) 
 				{
-					camz *= .8
+					camz *= .9
 					if (camz < .0001) { camz = 0 }
 				}
 							
@@ -335,8 +335,30 @@
 							}
 							
 						}
+						
 					}
-
+					
+					/*
+					if (true) // (i == 0)
+					{
+						object.position.x = 0 //Math.random() * 2000 - 1000;
+						object.position.y = 0 //Math.random() * 2000 - 1000;
+						object.position.z = 0 //Math.random() * 2000 - 1000;
+					
+						object.rotation.x = 0//Math.random() * 3.14*2;
+						object.rotation.y = 0// Math.random() * 3.14*2;
+						object.rotation.z = 0		
+						
+						object.scale.x = 1
+							object.scale.y = 1
+							object.scale.z = 1				
+					}
+					else
+					{
+						object.rotation.z = 1000
+					}
+					*/
+					
 				}
 
 				
@@ -393,7 +415,7 @@
 				for ( i = 0; i < scene.children.length; i ++ ) 
 				{
 					var object = scene.children[ i ];
-					object.material.color.setRGB(Math.sin(time)*.9+.1, Math.sin(time+1)*.9+.1, Math.sin(time+2)*.9+.1 )
+					object.material.color.setRGB(Math.sin(time), Math.cos(time), Math.tan(time))
 				}					
 			}
 			
@@ -408,18 +430,18 @@
 					
 				}); 
 
-			    $(document).bind('keydown', 'p', function(e) { 
+			    $(document).bind('keydown', 'j', function(e) { 
 					crazy = 1
 				}); 
-			    $(document).bind('keyup', 'p', function(e) { 
+			    $(document).bind('keyup', 'j', function(e) { 
 					crazy = 0
 				}); 
 				
 								
-			    $(document).bind('keydown', 'o', function(e) { 
+			    $(document).bind('keydown', 'k', function(e) { 
 					crazy2 = 1
 				}); 
-			    $(document).bind('keyup', 'o', function(e) { 
+			    $(document).bind('keyup', 'k', function(e) { 
 					crazy2 = 0
 				}); 
 				
@@ -445,15 +467,13 @@
 				}); 
 				
 				
-				/*
-			    $(document).bind('keydown', 'i', function(e) { 
+			    $(document).bind('keydown', 'l', function(e) { 
 					crazy4 = 1
 				}); 
-			    $(document).bind('keyup', 'i', function(e) { 
+			    $(document).bind('keyup', 'l', function(e) { 
 					crazy4 = 0
 					//scene.fog.color = 0xffffff
 				}); 
-				*/
 				
 				
 				 $(document).bind('keydown', 'd', function(e) { 
