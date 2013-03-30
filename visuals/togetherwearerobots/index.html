@@ -280,24 +280,40 @@
               'media/nao/13.mov',
               'media/nao/14.mov',
               ],
-            index: 0
+            index: -1
           },
-          coffee: {
-            media: ['coffeecrop1.mp4',],
-            index: 0
+          fanta: {
+            media: [
+              'media/fanta/1.mov',
+              'media/fanta/2.mov',
+              'media/fanta/3.mov',
+              'media/fanta/4.mov',
+              'media/fanta/5.mov',
+              'media/fanta/6.mov',
+              'media/fanta/7.mov',
+              'media/fanta/8.mov',
+              'media/fanta/9.mov',
+              'media/fanta/10.mov',
+              'media/fanta/11.mov',
+              'media/fanta/12.mov',
+              'media/fanta/13.mov',
+              ],
+            index: -1
           },
-          goldengate: {
+          welder: {
             media:[
-              'media/goldengate/2.mov',
-              'media/goldengate/3.mov',
-              'media/goldengate/4.mov',
-              'media/goldengate/5.mov',
-              'media/goldengate/6.mov',
-              'media/goldengate/7.mov',
-              'media/goldengate/8.mov',
-              'media/goldengate/9.mov',
-              'media/goldengate/10.mov',],
-           index: 0
+              'media/welder/1.mov',
+              'media/welder/2.mov',
+              'media/welder/3.mov',
+              'media/welder/4.mov',
+              'media/welder/5.mov',
+              'media/welder/6.mov',
+              'media/welder/7.mov',
+              'media/welder/8.mov',
+              'media/welder/9.mov',
+              'media/welder/10.mov',
+              'media/welder/11.mov',],
+           index: -1
           },
           set: null,
           next: function(){
@@ -335,13 +351,13 @@
               onToggleShaders();
               break;
             case 'DPAD_UP':
-              videoMedia.set = videoMedia.goldengate;
+              videoMedia.set = videoMedia.nao;
               break;
             case 'DPAD_DOWN':
-              videoMedia.set = videoMedia.sanfrancisco;
+              videoMedia.set = videoMedia.welder;
               break;
             case 'DPAD_RIGHT':
-              videoMedia.set = videoMedia.coffee;
+              videoMedia.set = videoMedia.fanta;
               break;
             case 'DPAD_LEFT':
               break;
