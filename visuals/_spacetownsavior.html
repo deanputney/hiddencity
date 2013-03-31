@@ -7,7 +7,7 @@
 		<style>
     @font-face{
       font-family:Orbitron;
-      src:url('../fonts/Orbitron Black.otf');
+      src:url('../fonts/SaturnV.otf');
     }
     
 			body {
@@ -22,13 +22,13 @@
 			}
       
       #bandname{
-        font-family:Orbitron;
+        font-family:Futura;
         position:fixed;
         color:white;
         text-align:center;
         width:100%;
         height:20%;
-        margin:20% 0;
+        margin:15% 0;
         font-size:100px;
         text-transform:uppercase;
       }
@@ -40,7 +40,7 @@
     	<script type="text/javascript" src="../js/gamepad.js"></script>
       
       <div id="bandname">
-        space town savior
+        space town <br/>savior
       </div>
 
 		<script src="../three.js/examples/../build/three.min.js"></script>
@@ -68,8 +68,8 @@
 				camera.position.z = 0;
 
 				scene = new THREE.Scene();
-				//scene.fog = new THREE.FogExp2( 0x000000, 0.0008 );
-				scene.fog = new THREE.FogExp2( 0xffffff, 0.0008 );
+        scene.fog = new THREE.FogExp2( 0x000000, 0.0008 );
+        // scene.fog = new THREE.FogExp2( 0xffffff, 0.0008 );
 
 				geometry = new THREE.Geometry();
 
