@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - particles - sprites</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+    @font-face{
+      font-family:Orbitron;
+      src:url('../fonts/SaturnV.otf');
+    }
+    
+			body {
+				background-color: #fff;
+				margin: 0px;
+				overflow: hidden;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				font-weight: bold;
+				text-align:center;
+			}
+      
+      #bandname{
+        font-family:Futura;
+        position:fixed;
+        color:white;
+        text-align:center;
+        width:100%;
+        height:20%;
+        margin:15% 0;
+        font-size:100px;
+        text-transform:uppercase;
+      }
+		</style>
+	</head>
+	<body>
+    	<script type="text/javascript" src="../js/jquery.min.js"></script>
+    	<script type="text/javascript" src="../js/jquery.hotkeys.js"></script>
+    	<script type="text/javascript" src="../js/gamepad.js"></script>
+      
+      <div id="bandname">
+        space town <br/>savior
+      </div>
+
+		<script src="../three.js/examples/../build/three.min.js"></script>
+
+		<script src="../three.js/examples/js/Detector.js"></script>
+
+		<script>
+
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var container //, stats;
+			var camera, scene, renderer, particles, geometry, materials = [], parameters, i, h, color, sprite, size;
+			var mouseX = 0, mouseY = 0;
+
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 2000 );
+				camera.position.z = 0;
+
+				scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2( 0x000000, 0.0008 );
+        // scene.fog = new THREE.FogExp2( 0xffffff, 0.0008 );
+
+				geometry = new THREE.Geometry();
+
+				sprites = []
+				for (var i = 2; i < 300; i ++)
+				{
+					var sprite = THREE.ImageUtils.loadTexture( "galaxies/galaxies_" + i + ".png" );
+					if (sprite)
+					{
+						sprites.push(sprite)
+					}
+				}
+				
+				
+				
+				sprite1 = THREE.ImageUtils.loadTexture( "galaxies/galaxies_2.png" );
+				sprite2 = THREE.ImageUtils.loadTexture("galaxies/galaxies_3.png" );
+				sprite3 = THREE.ImageUtils.loadTexture( "galaxies/galaxies_4.png" );
+				sprite4 = THREE.ImageUtils.loadTexture( "galaxies/galaxies_5.png" );
+				sprite5 = THREE.ImageUtils.loadTexture( "galaxies/galaxies_6.png" );
+
+				var max = 4000
+				for ( i = 0; i < 1000; i ++ ) {
+
+					var vertex = new THREE.Vector3();
+					vertex.x = Math.random() * max - max/2;
+					vertex.y = Math.random() * max - max/2;
+					vertex.z = Math.random() * max - max/2;
+					geometry.vertices.push( vertex );
+				}
+
+				parameters = [ [ [1.0, 0.2, 0.5], sprite2, 20 ],
+							   [ [0.95, 0.1, 0.5], sprite3, 15 ],
+							   [ [0.90, 0.05, 0.5], sprite1, 10 ],
+							   [ [0.85, 0, 0.5], sprite5, 8 ],
+							   [ [0.80, 0, 0.5], sprite4, 5 ],
+							   ];
+
+				objectSize = 40
+				//for ( i = 0; i < parameters.length; i ++ ) {
+				for ( i = 0; i < sprites.length/10; i ++ ) {
+
+
+					//color  = parameters[i][0];
+					/*
+					sprite = parameters[i][1];
+					size   = parameters[i][2];
+					*/
+
+					color  = [1,1,1];
+					sprite = sprites[i % sprites.length]
+					size   = objectSize;
+					
+					materials[i] = new THREE.ParticleBasicMaterial( { size: size, map: sprite, blending: THREE.AdditiveBlending, depthTest: false, transparent : true } );
+					materials[i].color.setHSL( color[0], color[1], color[2] );
+
+					particles = new THREE.ParticleSystem( geometry, materials[i] );
+
+					particles.rotation.x = Math.random() * 6;
+					particles.rotation.y = Math.random() * 6;
+					particles.rotation.z = Math.random() * 6;
+
+					scene.add( particles );
+
+				}
+
+				renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+
+/*
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				container.appendChild( stats.domElement );
+*/
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function onDocumentMouseMove( event ) {
+
+				mouseX = event.clientX - windowHalfX;
+				mouseY = event.clientY - windowHalfY;
+
+			}
+
+			function onDocumentTouchStart( event ) {
+
+				if ( event.touches.length === 1 ) {
+
+					event.preventDefault();
+
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+				}
+
+			}
+
+			function onDocumentTouchMove( event ) {
+
+				if ( event.touches.length === 1 ) {
+
+					event.preventDefault();
+
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+				}
+
+			}
+
+			//
+
+			function animate() 
+			{
+				requestAnimationFrame( animate );
+				render();
+			}
+
+			velz = 1
+			gas = 0
+			crazy = 0
+			crazy2 = 0
+			crazy3 = 0
+			crazy4 = 0
+			crazy5 = 0
+			crazy6 = 0
+			camz = 0
+			crazy7 = 0
+			crazy8 = 0
+			crazy9 = 0
+			
+			function render() 
+			{
+
+				var time = Date.now() * 0.00005;
+
+				//camera.lookAt( scene.position );
+
+				if (gas && velz < 30) 
+				{
+					velz *= 1.5
+				}
+				
+				if (!gas && velz > 1) 
+				{
+					velz *= .8
+				}
+
+				if (crazy3)
+				{
+					randomizeColors()
+				}
+
+				if (crazy5)
+				{
+					pulseColors()
+				}
+				
+				if (crazy4 && camz < .01) 
+				{
+					if(camz == 0) { camz = .001 }
+					camz *= 1.1
+				}
+				
+				if (!crazy4 && camz > 0) 
+				{
+					camz *= .9
+					if (camz < .0001) { camz = 0 }
+				}
+							
+				if (crazy4)
+				{
+					camera.rotation.z += camz
+				}
+				else
+				{
+					camera.rotation.z -= .0003
+				}
+				
+				if (crazy8)
+				{
+					
+				}
+				
+				
+				var max = 1000
+				for ( i = 0; i < scene.children.length; i ++ ) 
+				{
+
+					var object = scene.children[ i ];
+
+					if ( object instanceof THREE.ParticleSystem ) 
+					{
+						if (crazy6)
+						{
+							object.position.z += 50*(Math.random() -.5);
+						}
+						else
+						{
+							object.position.z += velz;
+						}
+						
+						if (crazy7)
+						{
+							object.position.x += (Math.random()-.5)*10;
+							object.position.y += (Math.random()-.5)*10;
+						}
+
+						
+						if (crazy)
+						{
+							object.rotation.x += .01;
+							object.rotation.y += .01;
+							object.rotation.z += .01;
+						}
+						
+						if (crazy2)
+						{
+							if(object.scale.x < 10)
+							{
+								object.scale.x *= 1.01
+								object.scale.y *= 1.01
+								object.scale.z *= 1.01
+							}
+						}
+						else
+						{
+							if(object.scale.x > 1)
+							{
+								object.scale.x *= .99
+								object.scale.y *= .99
+								object.scale.z *= .99
+							}
+						}
+						
+						if (crazy3)
+						{
+						//	object.material.color.setHSL( Math.random(), Math.random(), Math.random() )
+						}
+						
+						if (object.position.z > 0) 
+						{ 
+							object.position.z = -1000;
+							 
+							if (!crazy9)
+							{
+								object.position.x = Math.random() * 2000 - 1000;
+								object.position.y = Math.random() * 2000 - 1000;
+							
+								object.rotation.x = Math.random() * 3.14*2;
+								object.rotation.y = Math.random() * 3.14*2;
+								object.rotation.z = Math.random() * 3.14*2;
+							}
+							else
+							{
+								object.position.x = 0 //Math.random() * 2000 - 1000;
+								object.position.y = 0 //Math.random() * 2000 - 1000;
+							
+								object.rotation.x = 0//Math.random() * 3.14*2;
+								object.rotation.y = 0// Math.random() * 3.14*2;
+								object.rotation.z = Math.random() * 3.14*2;								
+							}
+							
+						}
+						
+					}
+					
+					/*
+					if (true) // (i == 0)
+					{
+						object.position.x = 0 //Math.random() * 2000 - 1000;
+						object.position.y = 0 //Math.random() * 2000 - 1000;
+						object.position.z = 0 //Math.random() * 2000 - 1000;
+					
+						object.rotation.x = 0//Math.random() * 3.14*2;
+						object.rotation.y = 0// Math.random() * 3.14*2;
+						object.rotation.z = 0		
+						
+						object.scale.x = 1
+							object.scale.y = 1
+							object.scale.z = 1				
+					}
+					else
+					{
+						object.rotation.z = 1000
+					}
+					*/
+					
+				}
+
+				
+				
+/*
+				for ( i = 0; i < scene.children.length; i ++ ) {
+
+					var object = scene.children[ i ];
+
+					if ( object instanceof THREE.ParticleSystem ) {
+
+						object.rotation.y = time * ( i < 4 ? i + 1 : - ( i + 1 ) );
+
+					}
+
+				}
+
+				for ( i = 0; i < materials.length; i ++ ) {
+
+					color = parameters[i][0];
+
+					h = ( 360 * ( color[0] + time ) % 360 ) / 360;
+					materials[i].color.setHSL( h, color[1], color[2] );
+
+				}
+				*/
+
+				renderer.render( scene, camera );
+
+			}
+			
+				
+			function randomizeColors()
+			{
+				for ( i = 0; i < scene.children.length; i ++ ) 
+				{
+					var object = scene.children[ i ];
+					object.material.color.setHSL( Math.random(), Math.random(), Math.random() )
+				}	
+			}
+			
+			function whitenColors()
+			{
+				for ( i = 0; i < scene.children.length; i ++ ) 
+				{
+					var object = scene.children[ i ];
+					object.material.color.setHSL(1,1,1 )
+				}	
+			}
+			
+			function pulseColors()
+			{
+				var time = Date.now() * 0.005;
+				for ( i = 0; i < scene.children.length; i ++ ) 
+				{
+					var object = scene.children[ i ];
+					object.material.color.setRGB(Math.sin(time), Math.cos(time), Math.tan(time))
+				}					
+			}
+			
+			init();
+			animate();
+
+			    $(document).bind('keydown', 'w', function(e) { 
+					gas = 1
+				}); 
+			    $(document).bind('keyup', 'w', function(e) { 
+					gas = 0
+					
+				}); 
+
+			    $(document).bind('keydown', 'j', function(e) { 
+					crazy = 1
+				}); 
+			    $(document).bind('keyup', 'j', function(e) { 
+					crazy = 0
+				}); 
+				
+								
+			    $(document).bind('keydown', 'k', function(e) { 
+					crazy2 = 1
+				}); 
+			    $(document).bind('keyup', 'k', function(e) { 
+					crazy2 = 0
+				}); 
+				
+				
+				
+				isSdown = false
+			    $(document).bind('keydown', 's', function(e) { 
+					if (!isSdown) { randomizeColors(); isSdown = true }
+					
+				}); 
+			    $(document).bind('keyup', 's', function(e) { 
+					whitenColors()
+					isSdown = false
+				}); 				
+				
+				
+				 $(document).bind('keydown', 'a', function(e) { 
+					crazy3 = 1
+				}); 
+				
+				$(document).bind('keyup', 'a', function(e) { 
+					crazy3 = 0
+				}); 
+				
+				
+			    $(document).bind('keydown', 'l', function(e) { 
+					crazy4 = 1
+				}); 
+			    $(document).bind('keyup', 'l', function(e) { 
+					crazy4 = 0
+					//scene.fog.color = 0xffffff
+				}); 
+				
+				
+				 $(document).bind('keydown', 'd', function(e) { 
+					crazy5 = 1
+				}); 
+
+				 $(document).bind('keyup', 'd', function(e) { 
+					crazy5 = 0
+				}); 	
+				
+				
+				
+				 $(document).bind('keydown', 'x', function(e) { 
+					crazy6 = 1
+				}); 
+
+				 $(document).bind('keyup', 'x', function(e) { 
+					crazy6 = 0
+				}); 	
+				
+				
+				 $(document).bind('keydown', 'z', function(e) { 
+					crazy7 = 1
+				}); 
+
+				 $(document).bind('keyup', 'z', function(e) { 
+					crazy7 = 0
+				}); 
+				
+				 $(document).bind('keydown', 'c', function(e) { 
+					crazy8 = 1
+				}); 
+
+				 $(document).bind('keyup', 'c', function(e) { 
+					crazy8 = 0
+				});
+				
+				
+				 $(document).bind('keydown', 'v', function(e) { 
+					crazy9 = !crazy9
+          
+				});
+        
+         $(document).bind('keydown', '1', function(e){
+           $('#bandname').toggle();
+        });
+        
+         $(document).bind('keyup', '1', function(e){
+           $('#bandname').toggle();
+        });
+        
+          $(document).bind('keyup', 'shift+1', function(e){
+            $('#bandname').toggle();
+         });
+
+
+
+
+				fogIndex = 0
+				
+				 $(document).bind('keydown', 'n', function(e) { 
+					var col = [0xffffff, 0xff0000, 0x00ff00, 0x0000ff]
+						scene.fog = new THREE.FogExp2( col[fogIndex % col.length], 0.0008 ); 
+					fogIndex ++;
+				}); 
+
+													
+				$(document).bind('keydown', 'm', function(e) { 
+						scene.fog = new THREE.FogExp2( 0x000000, 0.0008 ); 
+					fogIndex ++;
+				}); 						
+				
+		</script>
+		
+
+	</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title></title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+    	<script type="text/javascript" src="../js/jquery.min.js"></script>
+    	<script type="text/javascript" src="../js/jquery.hotkeys.js"></script>
+    	<script type="text/javascript" src="../js/gamepad.js"></script>
+
+		<script src="../js/three.min.js"></script>
+		<!--
+		<script src="../../visuals/defaults.js"></script>
+		-->
+		
+		<script src="../three.js/examples/js/Detector.js"></script>
+		<script src="../three.js/examples/js/libs/stats.min.js"></script>
+
+		<script>
+			COLORSETS = {}
+  			COLORSETS.RAINBOWBRITE = new Array('#71c8bf', '#1ba554', '#cad93b', '#fef02f', '#fbb62c', '#f38a2e', '#ee592c', '#ea1d2b', '#b42767', '#65328f', '#52529f', '#20aeda')
+
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var container, stats;
+
+			var camera, scene, renderer;
+
+			objects = [
+			/*
+				{ 
+					name: "sphere", 
+					create: function () { return new THREE.SphereGeometry( 75, 20, 10 ) }
+				},
+				
+				{ 
+					name: "icos", 
+					create: function () { return new THREE.IcosahedronGeometry( 75, 1 ) }
+				},
+				*/
+
+				{ 
+					name: "tetra", 
+					create: function () { return new THREE.TetrahedronGeometry( 75, 0 ) },
+					isWireframe: true
+
+				},
+				
+				{ 
+					name: "octo", 
+					create: function () { return new THREE.OctahedronGeometry( 75, 3 ) },
+					isWireframe: true
+
+				},
+				
+				{ 
+					name: "cube", 
+					create: function () { return new THREE.CubeGeometry( 100, 100, 100, 4, 4, 4 ) },
+					isWireframe: false
+				},
+				
+				/*
+				{ 
+					name: "cylinder", 
+					create: function () { return new THREE.CylinderGeometry( 25, 75, 100, 40, 5 ) }
+				},
+				*/
+				{ 
+					name: "torus", 
+					create: function () { return new THREE.TorusGeometry( 50, 20, 3, 50 ) },
+					isWireframe: true
+				}
+				
+			]
+			
+			
+			sceneObjectType = 1
+			isWireframe = false
+			
+			function nextSceneObjectType()
+			{
+				sceneObjectType ++
+				if (sceneObjectType == objects.length)
+				{
+					sceneObjectType = 0
+				}
+			}
+			
+			function setupObjects() 
+			{
+				var max = 2000
+				var i = 1
+				sceneObjects = []
+				
+				for (var x = -max; x < max; x += 400)
+				{
+						i = i + 1
+					for (var z = -max; z < max; z += 400)
+					{
+						i = i + 1
+						var useObj = objects[sceneObjectType]
+						var color = COLORSETS.RAINBOWBRITE[i % COLORSETS.RAINBOWBRITE.length]
+						mainMaterial = new THREE.MeshLambertMaterial( {  
+							ambient: 0xffffff, 
+							color: color, 
+							wireframe: useObj.isWireframe, 
+							transparent: false, 
+							opacity: .1, 
+							side: THREE.DoubleSide 
+						} ),
+						
+						materials = [
+						//new THREE.MeshBasicMaterial( { color: COLORSETS.RAINBOWBRITE[0], wireframe: false, wireframeLinewidth: 1, overdraw: true } )
+						//new THREE.MeshLambertMaterial( { ambient: 0xbbbbbb, map: map, side: THREE.DoubleSide } ),
+						//	ambient: 0xbbbbbb, 
+
+						mainMaterial
+						
+
+						//new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true,  wireframeLinewidth: 4, transparent: true, opacity: .3, side: THREE.DoubleSide } )
+						//new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true,  wireframeLinewidth: 4, transparent: true, opacity: .3, side: THREE.DoubleSide } )
+						];
+						
+						//objNum = i % objects.length
+						object = THREE.SceneUtils.createMultiMaterialObject( useObj.create(), materials );
+						//object = THREE.SceneUtils.createObject( objects[sceneObjectType].create(), mainMaterial );
+						object.position.set( -x, 0, z );
+						scene.add( object );
+						sceneObjects.push(object)
+					}
+				}				
+				
+			}
+
+			
+			function init() 
+			{
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
+				camera.position.y = 400;
+
+				scene = new THREE.Scene();
+
+				var light, object, object2, materials;
+
+				//scene.add( new THREE.AmbientLight( 0x000000 ) );
+				//scene.add( new THREE.AmbientLight( 0x111111 ) );
+
+				light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 0, 1, 0 );
+				scene.add( light );
+				mainLight = light
+				/*
+				light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 0, -100, 0 );
+				scene.add( light );	
+				*/			
+				/*
+				var map = THREE.ImageUtils.loadTexture( 'textures/ash_uvgrid01.jpg' );
+				map.wrapS = map.wrapT = THREE.RepeatWrapping;
+				map.anisotropy = 16;
+				*/
+
+				setupObjects()
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+				setupBindings()
+			}
+
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+
+			function animate() 
+			{
+				requestAnimationFrame( animate );
+				render();
+			}
+
+
+			var rotXV = 0
+			var rotYV = 0
+			var rotZV = 0
+			var objectScale = 1
+			var stopRotXV = false
+			var stopRotYV =  false
+			var rotPlane =  false
+			var timeCount = 0
+			
+			function render() 
+			{
+				var rate = 0.0001
+				timeCount = timeCount + rate
+				var timer = timeCount*20 //Date.now() * rate;
+
+				camera.position.x = Math.cos( timeCount *30) * 800;
+				if (rotPlane) { camera.position.y = Math.sin( timeCount *30 ) * 800; }
+				camera.position.z = Math.sin( timeCount *30) * 800;
+
+				camera.lookAt( scene.position );
+				
+				
+				for ( var i = 0, l = scene.children.length; i < l; i ++ ) 
+				{
+					var object = scene.children[ i ];
+					
+					/*
+					var mrx = Math.floor(object.rotation.x *(3.14159/180)) % 45
+					var mry = Math.floor(object.rotation.z *(3.14159/180)) % 45
+					
+					//console.log("mrx = " + mrx)
+					
+					if (stopRotXV && mrx == 0) { rotXY = 0; stopRotXV = false; }
+					if (stopRotYV && mry == 0) { rotYY = 0; stopRotYV = false; }
+				*/
+					object.rotation.x += rotXV/40;
+					object.rotation.y += rotYV/40;
+					object.rotation.z += rotZV/40;
+				}
+				renderer.render( scene, camera );
+			}
+			
+			function removeObjects()
+			{
+				for (var i = 0; i < sceneObjects.length; i++) 
+				{
+					scene.remove( sceneObjects[i] );	
+				}		
+				sceneObjects = []
+			}
+
+			function toggleWireframe()
+			{
+				for (var i = 0; i < sceneObjects.length; i++) 
+				{
+					sceneObjects[i].materials[0].wireframe = true //!sceneObjects[i].material.wireframe
+				}		
+			}
+			
+			function setObjectsScale(scale)
+			{
+				for (var i = 0; i < sceneObjects.length; i++) 
+				{
+					if (typeof(scale) == "number")
+					{
+						sceneObjects[i].scale.x = scale
+						sceneObjects[i].scale.y = scale
+						sceneObjects[i].scale.z = scale
+						objectScale = scale
+					}
+					else
+					{
+						sceneObjects[i].scale.x = scale.x
+						sceneObjects[i].scale.y = scale.y
+						sceneObjects[i].scale.z = scale.z
+					}
+				}		
+			}
+			
+			function updateColors()
+			{
+				for (var i = 0; i < sceneObjects.length; i++) 
+				{
+					var color = COLORSETS.RAINBOWBRITE[(i*4) % COLORSETS.RAINBOWBRITE.length]
+					sceneObjects[i].material.color = color
+				}		
+			}
+
+			//var paramKeys = "abcdefghijklmnopqrstuvwxyz"
+			//var params = { }
+			
+			function setupBindings()
+			{
+				/*
+				for (var i = 0; i < paramKeys.length; i++) 
+				{
+					var pk = paramKeys[i]
+					params[pk] = 0
+			    	$(document).bind('keydown', pk, function(e) { 
+						k = String.fromCharCode(e.keyCode).toLowerCase(); 
+						params[k] ++; console.log("keydown " + k) 
+					});
+				}
+				*/
+
+/*
+pulse size (2 sizes)
+shapes (left-right paging)
+wireframe toggle
+x & y & spin rot speed
+*/
+
+				lastObjectScale = null
+			    $(document).bind('keydown', 'p', function(e) {
+					if (lastObjectScale == null) 
+					{ 
+						lastObjectScale = objectScale 
+						objectScale *= 1.1
+						setObjectsScale(objectScale)
+					}
+				}); 
+
+			    $(document).bind('keyup', 'p', function(e) { 
+					setObjectsScale(lastObjectScale)
+					lastObjectScale = null
+				}); 
+				
+			    $(document).bind('keydown', 'o', function(e) { 
+					setObjectsScale(4)
+				}); 
+				
+			    $(document).bind('keydown', 'i', function(e) { 
+					setObjectsScale(2.83)
+				}); 
+				
+			    $(document).bind('keydown', 'u', function(e) { 
+					setObjectsScale(2)
+				}); 
+
+			    $(document).bind('keydown', 'u', function(e) { 
+					setObjectsScale(1)
+				}); 
+
+			    $(document).bind('keydown', 'y', function(e) { 
+					setObjectsScale(.5)
+				//	setObjectsScale({x: 1, y: 5, z:1 })
+				}); 
+								
+			    //$(document).bind('keydown', 'o', function(e){ objectScale += .1; console.log(String.fromCharCode(e.keyCode)) }); 
+			    //$(document).bind('keydown', 'p', function(e){ objectScale -= .1; console.log(String.fromCharCode(e.keyCode)) });
+			
+			    $(document).bind('keydown', 'a', function(e){ rotYV = 1 ;  }); 
+			    $(document).bind('keydown', 's', function(e){ rotYV = 0; stopRotYV = true;   }); 
+			    $(document).bind('keydown', 'd', function(e){ rotYV = -1;  });
+			
+			    $(document).bind('keydown', 'q', function(e){ rotXV = 1;  }); 
+			    $(document).bind('keydown', 'w', function(e){ rotXV = 0; stopRotXV = true; }); 
+			    $(document).bind('keydown', 'e', function(e){ rotXV = -1;  }); // x spin
+			
+			    $(document).bind('keydown', 'z', function(e){ rotZV = 1 })
+			    $(document).bind('keydown', 'x', function(e){ rotZV = 0 })
+			    $(document).bind('keydown', 'c', function(e){ rotZV = -1 })
+			    $(document).bind('keydown', 'b', function(e){ rotPlane = !rotPlane })
+			/*
+			    $(document).bind('keydown', 'c', function(e){ mainLight.position.set( 0, 1, 0 ); })
+			    $(document).bind('keydown', 'v', function(e){ mainLight.position.set( 1, 0, 0 ); })
+			    $(document).bind('keydown', 'b', function(e){ mainLight.position.set( 0, 0, 1 ); })
+			*/
+			/*
+			    $(document).bind('keydown', 'n', function(e){ 
+					removeObjects(); 
+					nextSceneObjectType(); 
+					setupObjects() 
+				}); 
+				*/
+				
+			    $(document).bind('keydown', 'm', function(e){ 
+					//updateColors()
+					//isWireframe = !isWireframe
+					removeObjects(); 
+					nextSceneObjectType(); 
+					setupObjects() 
+				})
+			
+
+			    //$(document).bind('keydown', 'j', function(e){ rotYV = rotYV + 1 }); // x spin
+			    //$(document).bind('keydown', 'k', function(e){ rotYV = rotYV + 1 }); // x spin
+			
+			/*
+			    $(document).bind('keydown', 'l', function(){
+			      for(b in game.BARS.objects) {
+			          game.BARS.objects[b].rotation.x += b/game.BARS.objects.length;
+			        }
+			      });
+			    $(document).bind('keydown', 'j', function(){game.BARS.rotation.speed += 0.01;});
+			    $(document).bind('keydown', 'k', function(){game.BARS.rotation.speed -= 0.01;});
+			    $(document).bind('keydown', 'e', function(){camera.lookAt({x:0,y:0,z:0})});
+			    $(document).bind('keydown', 'w', function(){camera.translateZ(-500);});
+			    $(document).bind('keydown', 's', function(){camera.translateZ(500);});
+			*/
+			
+			    /* Gamepad binding */
+			
+				var global = Function('return this')() || (42, eval)('this');
+    			if (global.gamepad == null) { return }
+				
+			    console.log('binding down');
+			    gamepad.bind(Gamepad.Event.BUTTON_DOWN, function(e) {
+			      switch(e.control){
+			        case 'Y':
+			          game.BARS.toggleWireframe();
+			          break;
+			        case 'X':
+			          game.BARS.toggleWireframe();
+			          break;
+			        case 'B':
+			          console.log('color shift');
+			          game.BARS.colorset.push(game.BARS.colorset.shift());
+			          for(var xpos = 0; xpos < 12; xpos++ ){
+			            game.BARS.objects[xpos].material =  new THREE.MeshBasicMaterial( { color: game.BARS.colorset[xpos], wireframe: false, wireframeLinewidth: 3, overdraw: true } );
+			          }
+			          break;
+			        case 'BACK':
+			          window.location = window.location;
+			          break;
+			      }
+			    });
+		
+			    gamepad.bind(Gamepad.Event.BUTTON_UP, function(e) {
+			      switch(e.control){
+			        case 'X':
+			          game.BARS.toggleWireframe();
+			          break;
+			        case 'RB':
+			          for(b in game.BARS.objects) {
+			            game.BARS.objects[b].rotation.x += b/game.BARS.objects.length;
+			          }
+			          break;
+			        case 'LB':
+			          for(b in game.BARS.objects) {
+			            game.BARS.objects[b].rotation.x -= b/game.BARS.objects.length;
+			          }
+			          break;
+			        case 'DPAD_UP':
+			          game.BARS.rotation.speed += 0.01;
+			          break;
+			        case 'DPAD_DOWN':
+			          game.BARS.rotation.speed -= 0.01;
+			          break;
+			        case 'DPAD_RIGHT':
+			          camera.orbit.speed += 10;
+			          break;
+			        case 'DPAD_LEFT':
+			          camera.orbit.speed -= 10;
+			          break;
+			      }
+			    });    
+
+			}
+			
+			init();
+			animate();
+
+		</script>
+
+	</body>
+</html>

@@ -95,14 +95,17 @@ var menu = {
       case 'minusbaby':
         menu.gameSelection = MinusBaby;
         break;
+      case 'together we are robots':
+        window.location = window.location.href.replace('index.html', '')+'visuals/togetherwearerobots/index.html';
+        break;
       case 'doctor popular':
-        menu.gameSelection = DoctorPopular;
+        window.location = window.location.href.replace('index.html', '')+'visuals/doctorpopular/index.html';
+        break;
+      case 'space town savior':
+        window.location = window.location.href.replace('index.html', '')+'visuals/doctorpopular/index.html';
         break;
       case 'decktonic':
-        menu.gameSelection = Decktonic;
-        break;
-      case 'together we are robots':
-        menu.gameSelection = TogetherWeAreRobots;
+        window.location = window.location.href.replace('index.html', '')+'visuals/_steve.html';
         break;
       default:
         return;

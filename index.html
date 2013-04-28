@@ -5,6 +5,7 @@
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.hotkeys.js"></script>
     <script type="text/javascript" src="js/stats.min.js"></script>
+    <script type="text/javascript" src="js/colors.min.js"></script>
     
     <script type="text/javascript" src="three.js/build/three.min.js"></script>
     <script type="text/javascript" src="three.js/examples/js/postprocessing/DotScreenPass.js"></script>
@@ -67,11 +68,16 @@
       <ul>
         <li><span class="selected">minusbaby</span></li>
         <li><span>BR1GHT PR1MATE</span></li>
-        <li><span>Doctor Popular</span></li>
-        <li><span>Decktonic</span></li>
         <li><span>Together We Are Robots</span></li>
+        <li><span>Doctor Popular</span></li>
+        <li><span>Space Town Savior</span></li>
+        <li><span>Decktonic</span></li>
       </ul>
     </div>
+    
+		<video id="video" autoplay loop style="display:none">
+			<source src="visuals/doctorpopular/defenestration.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+		</video>
     
     
     <script>
@@ -91,8 +97,6 @@
         
         game = null;
         menu.init();
-        // $('#menu').hide();
-        // game = new MinusBaby();
                 
        /* var stats = new Stats();
         stats.setMode(0); // 0: fps, 1: ms
