@@ -1,8 +1,7 @@
-var MinusBaby = function(){
-  COLORSETS.MINUSBABY = new Array('#00b9f1', '#FF0E9B', '#20BECC');
+var DoctorPopular = function(){
   this.BACKGROUND = {
     default: '#000000',
-    colorset: COLORSETS.MINUSBABY.slice(0),
+    // colorset: COLORSETS.MINUSBABY.slice(0),
     togglePulse: function(){
       if(this.color == this.default){
         $('body').css('background', this.colorset[0]);
@@ -18,89 +17,29 @@ var MinusBaby = function(){
   };
   this.BACKGROUND.color = this.BACKGROUND.default;
   
-  
-  this.BARS = {
-    rotation: { 
-      speed: 0, 
-      quantity: 0 
-    },
-    colorset: COLORSETS.RAINBOWBRITE.slice(0),
-    wireframe: false,
+  this.SKYBOX = {
     objects: [],
     init: function(){
-      var bar, material;
-      for(var xpos = 0; xpos < 12; xpos++ ){
-        geometry = new THREE.CubeGeometry( window.innerWidth/12, window.innerHeight, window.innerWidth/12 );
-    		material = new THREE.MeshBasicMaterial( { color: BARS.colorset[0], wireframe: false, wireframeLinewidth: 3, overdraw: true } );
-            
-        bar = new THREE.Mesh( geometry, material );
-            
-        bar.position.x = window.innerWidth/12*xpos-window.innerWidth/2+window.innerWidth/12/2;
-        // bar.rotation.x = 1/12*xpos;
-        this.colorset.push(this.colorset.shift());
-        scene.add(bar);
-        this.objects.push(bar);
-      }
-      this.rotateColors();
-    },
-    rotateColors: function(){
-      for(b in this.objects){
-        this.objects[b].material.color = new THREE.Color(COLORSETS.RAINBOWBRITE[0]);
-        COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
-      }
-      COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
-      // setTimeout('rotateVerticalBarsColors();', 500);
-    },
-    toggleWireframe: function(){
-      console.log('wireframe'+Date());
-      for(b in BARS.objects){ BARS.objects[b].material.wireframe = !this.wireframe; }
-      this.wireframe = !this.wireframe;
+    	var materialArray = [];
+      console.log('loading');
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
+    	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'visuals/doctorpopular/treecut.jpg' ) }));
+      console.log('loaded');
+      
+    	for (var i = 0; i < 6; i++)
+    	   materialArray[i].side = THREE.BackSide;
+    	var skyboxMaterial = new THREE.MeshFaceMaterial( materialArray );
+	
+    	var skyboxGeom = new THREE.CubeGeometry( 5000, 5000, 5000, 1, 1, 1 );
+	
+    	var skybox = new THREE.Mesh( skyboxGeom, skyboxMaterial );
+    	scene.add( skybox );	
     }
   };
-  
-  this.ZFIGHTERS = {
-    rotation: { 
-      speed: 0, 
-      quantity: 0 
-    },
-    colorset: COLORSETS.RAINBOWBRITE.slice(0),
-    wireframe: false,
-    objects: [],
-    init: function(){
-      var planeW = 50; // pixels
-      var planeH = 50; // pixels 
-      var numW = 50; // how many wide (50*50 = 2500 pixels wide)
-      var numH = 50; // how many tall (50*50 = 2500 pixels tall)
-      var plane = new THREE.Mesh( new THREE.PlaneGeometry( planeW*50, planeH*50, planeW, planeH ), new   THREE.MeshBasicMaterial( { color: COLORSETS.MINUSBABY[0], wireframe: true, wireframeLinewidth: 5, overdraw: true } ) );
-      scene.add(plane);
-      this.objects.push(plane);
-      plane.position.z += .01;
-      
-      geometry = new THREE.CubeGeometry( window.innerWidth, window.innerHeight, .01 );
-  		material = new THREE.MeshBasicMaterial( { color: '#fff', wireframe: false, wireframeLinewidth: 3, overdraw: true } );
-          
-      // bar = new THREE.Mesh( geometry, material );
-      // scene.add(bar);
-      // this.objects.push(bar);
-      
-      var plane = new THREE.Mesh( new THREE.PlaneGeometry( planeW*50, planeH*50, planeW, planeH ), new   THREE.MeshBasicMaterial( { color: COLORSETS.MINUSBABY[1], wireframe: true, wireframeLinewidth: 5, overdraw: true } ) );
-      scene.add(plane);
-      this.objects.push(plane);
-    },
-    rotateColors: function(){
-      for(b in this.objects){
-        this.objects[b].material.color = new THREE.Color(COLORSETS.RAINBOWBRITE[0]);
-        COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
-      }
-      COLORSETS.RAINBOWBRITE.push(COLORSETS.RAINBOWBRITE.shift());
-      // setTimeout('rotateVerticalBarsColors();', 500);
-    },
-    toggleWireframe: function(){
-      console.log('wireframe'+Date());
-      for(b in BARS.objects){ BARS.objects[b].material.wireframe = !this.wireframe; }
-      this.wireframe = !this.wireframe;
-    }
-  }
   
   
   this.SHADERS = {
@@ -142,7 +81,7 @@ var MinusBaby = function(){
     scene = new THREE.Scene();
                 
     // BARS.init();
-    this.ZFIGHTERS.init();
+    this.SKYBOX.init();
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -247,9 +186,6 @@ var MinusBaby = function(){
     // mesh.rotation.x += 0.01;
     // mesh.rotation.y += 0.02;
     // console.log(navigator.webkitGetGamepads()[0].buttons[0]);
-    
-    game.ZFIGHTERS.objects[0].rotation.z += game.ZFIGHTERS.rotation.speed;
-    game.ZFIGHTERS.objects[1].rotation.z += -game.ZFIGHTERS.rotation.speed;
     
     if(Math.abs(camera.orbit.speed) > 0) camera.orbit.step();
     
